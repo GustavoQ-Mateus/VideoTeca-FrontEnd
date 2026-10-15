@@ -1,62 +1,161 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
-import { Select } from "@/components/ui/Select";
+import { AvailabilityCalendar } from "@/components/rooms/AvailabilityCalendar";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
-import { useToast } from "@/components/providers/ToastProvider";
-import { professor as api, staff } from "@/lib/api";
-import { getUser } from "@/lib/auth";
-
-export default function SolicitarSalaPage() {
-  const user = getUser();
-  const { toast } = useToast();
-  const [rooms,   setRooms]   = useState<any[]>([]);
+import { request, message, asISO } from "@/lib/sprint-api";
+import { useAuthUser } from "@/lib/use-auth-user";
+function local(value: string) {
+  const date = new Date(value);
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16);
+}
+export default function Page() {
+  const user = useAuthUser();
+  const form = useRef<HTMLFormElement>(null);
+  const [room, setRoom] = useState<{
+    id: number;
+    name: string;
+    capacity: number;
+  } | null>(null);
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
   const [loading, setLoading] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  useEffect(() => { staff.rooms().then(d => d && setRooms(d)); }, []);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form     = new FormData(e.currentTarget);
-    const room_id  = Number(form.get("room_id"));
-    const starts_at = form.get("starts_at") as string;
-    const ends_at   = form.get("ends_at") as string;
-    const title     = form.get("title") as string;
-    const notes     = form.get("notes") as string;
-
-    if (!room_id || !starts_at || !ends_at || !title) return;
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!room || loading) return;
+    setError("");
+    setSuccess("");
+    if (new Date(end) <= new Date(start)) {
+      setError("O fim deve ser posterior ao início.");
+      return;
+    }
+    if (new Date(start) <= new Date()) {
+      setError("Escolha um horário futuro.");
+      return;
+    }
     setLoading(true);
     try {
-      await api.requestRoom({ room_id, starts_at, ends_at, title, notes });
-      toast({ title: "Solicitação enviada", description: "A Videoteca analisará e responderá.", variant: "success" });
-      formRef.current?.reset();
-    } catch (err: any) {
-      toast({ title: "Erro", description: err.message, variant: "error" });
+      const data = new FormData(event.currentTarget);
+      const saved = await request<{ id: number }>("/reservas", {
+        method: "POST",
+        body: JSON.stringify({
+          room_id: room.id,
+          title: data.get("title"),
+          course: data.get("course"),
+          registration: data.get("registration"),
+          student_count: Number(data.get("student_count")),
+          starts_at: asISO(start),
+          ends_at: asISO(end),
+          notes: data.get("notes"),
+        }),
+      });
+      setSuccess(
+        `Solicitação #${saved.id} registrada. O horário está reservado enquanto aguarda análise.`,
+      );
+      setRoom(null);
+      form.current?.reset();
+    } catch (e) {
+      setError(message(e));
     } finally {
       setLoading(false);
     }
   }
-
   return (
-    <AppShell role="professor" title="Solicitar sala de exibição" user={{ name: user?.name ?? "", course: user?.course ?? "" }}>
-      <form ref={formRef} onSubmit={handleSubmit} className="max-w-2xl bg-white rounded-[18px] border border-[#E2E8F0] p-6 space-y-4">
-        <Select name="room_id" label="Sala" required defaultValue="">
-          <option value="" disabled>Selecione…</option>
-          {rooms.map(r => (
-            <option key={r.id} value={r.id}>{r.name} — capacidade {r.capacity}</option>
-          ))}
-        </Select>
-        <Input name="title" label="Título / Finalidade" required placeholder="Ex.: Exibição para Jornalismo Investigativo" />
-        <div className="grid grid-cols-2 gap-4">
-          <Input name="starts_at" label="Início" type="datetime-local" required />
-          <Input name="ends_at"   label="Fim"    type="datetime-local" required />
-        </div>
-        <Textarea name="notes" label="Observações" rows={3} placeholder="Opcional" />
-        <Button type="submit" disabled={loading}>{loading ? "Enviando..." : "Enviar solicitação"}</Button>
-      </form>
+    <AppShell
+      role="professor"
+      title="Solicitar sala"
+      user={{ name: user?.name ?? "", course: user?.course ?? "" }}
+    >
+      <div className="max-w-5xl space-y-6">
+        <AvailabilityCalendar
+          onSelect={(r, s) => {
+            setRoom(r);
+            setStart(local(s.starts_at));
+            setEnd(local(s.ends_at));
+            setSuccess("");
+          }}
+        />
+        {success && (
+          <p
+            role="status"
+            className="rounded-xl bg-emerald-50 p-4 text-emerald-800"
+          >
+            {success}
+          </p>
+        )}
+        {room && (
+          <form
+            ref={form}
+            onSubmit={submit}
+            className="space-y-4 rounded-[18px] border border-slate-200 bg-white p-6"
+            aria-busy={loading}
+          >
+            <h2 className="text-lg font-semibold">{room.name}</h2>
+            <Input
+              name="title"
+              label="Título / finalidade"
+              required
+              minLength={3}
+              maxLength={200}
+            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                name="course"
+                label="Curso"
+                required
+                defaultValue={user?.course ?? ""}
+                maxLength={120}
+              />
+              <Input
+                name="registration"
+                label="Matrícula"
+                required
+                defaultValue={user?.registration ?? ""}
+                readOnly={!!user?.registration}
+                maxLength={40}
+              />
+              <Input
+                name="student_count"
+                label="Número de alunos"
+                type="number"
+                required
+                min={1}
+                max={room.capacity}
+              />
+              <Input
+                label="Início"
+                type="datetime-local"
+                required
+                value={start}
+                onChange={(e) => setStart(e.target.value)}
+              />
+              <Input
+                label="Fim"
+                type="datetime-local"
+                required
+                value={end}
+                min={start}
+                onChange={(e) => setEnd(e.target.value)}
+              />
+            </div>
+            <Textarea name="notes" label="Observações" maxLength={2000} />
+            {error && (
+              <p role="alert" className="text-red-700">
+                {error}
+              </p>
+            )}
+            <Button loading={loading} type="submit">
+              {loading ? "Enviando solicitação…" : "Solicitar reserva"}
+            </Button>
+          </form>
+        )}
+      </div>
     </AppShell>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { Bell, Menu, Search, ChevronRight } from "lucide-react";
+import type { Ref } from "react";
+import { Bell, Menu, Search } from "lucide-react";
 
 interface TopBarProps {
   title: string;
@@ -9,7 +10,17 @@ interface TopBarProps {
   onMenuClick?: () => void;
   profileHref?: string;
   notificationsHref?: string;
+  /** Ref do botão de menu (para devolver o foco ao fechar a gaveta). */
+  menuButtonRef?: Ref<HTMLButtonElement>;
+  /** Estado da gaveta mobile (aria-expanded). */
+  menuExpanded?: boolean;
+  /** Id do elemento controlado pelo botão de menu (aria-controls). */
+  menuControls?: string;
 }
+
+const ICON_BTN =
+  "relative w-11 h-11 rounded-[4px] flex items-center justify-center text-fg-subtle hover:bg-canvas hover:text-fg " +
+  "transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand flex-shrink-0";
 
 export function TopBar({
   title,
@@ -18,61 +29,57 @@ export function TopBar({
   onMenuClick,
   profileHref   = "/aluno/perfil",
   notificationsHref,
+  menuButtonRef,
+  menuExpanded,
+  menuControls,
 }: TopBarProps) {
   const initials = user?.name.split(" ").map(n => n[0]).slice(0, 2).join("") ?? "U";
 
   return (
-    <header className="h-14 bg-white border-b border-[#E2E8F0] flex items-center px-4 sm:px-6 gap-3 flex-shrink-0">
+    <header className="sticky top-0 z-30 h-14 bg-surface border-b border-line flex items-center px-2 sm:px-6 gap-1 sm:gap-3 flex-shrink-0">
 
       {/* Mobile menu toggle */}
       <button
+        ref={menuButtonRef}
         type="button"
         onClick={onMenuClick}
-        className="lg:hidden p-2 -ml-2 rounded-[8px] text-[#667085] hover:bg-[#F5F7FA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066B3] transition-colors"
+        className={`lg:hidden ${ICON_BTN}`}
         aria-label="Abrir menu"
+        aria-expanded={menuExpanded}
+        aria-controls={menuControls}
+        aria-haspopup="dialog"
       >
-        <Menu className="w-5 h-5" />
+        <Menu className="w-5 h-5" aria-hidden />
       </button>
 
       {/* Title */}
-      <h1 className="text-sm font-semibold text-[#172033] truncate">{title}</h1>
-
-      {/* Breadcrumb chevron (visual) */}
-      <ChevronRight className="w-3.5 h-3.5 text-[#E2E8F0] hidden sm:block flex-shrink-0" aria-hidden />
+      <h1 className="text-sm sm:text-base font-semibold text-fg truncate min-w-0 flex-1 md:flex-none">{title}</h1>
 
       {/* Search */}
       {showSearch && (
-        <div className="hidden md:flex items-center gap-2 flex-1 max-w-xs ml-1">
+        <form role="search" className="hidden md:flex items-center flex-1 max-w-xs ml-2" onSubmit={(e) => e.preventDefault()}>
           <div className="relative w-full">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#98A2B3]" aria-hidden />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-fg-subtle pointer-events-none" aria-hidden />
             <input
               type="search"
               placeholder="Buscar no catálogo..."
-              className="w-full h-8 pl-8 pr-3 text-xs rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#172033] placeholder:text-[#98A2B3] focus:outline-none focus:border-[#0066B3] focus:bg-white transition-colors"
-              aria-label="Buscar"
+              className="w-full h-10 pl-9 pr-3 text-sm rounded-[4px] border border-line-strong bg-canvas text-fg placeholder:text-fg-subtle focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/25 focus:bg-surface transition-colors"
+              aria-label="Buscar no catálogo"
             />
           </div>
-        </div>
+        </form>
       )}
 
-      <div className="ml-auto flex items-center gap-1">
+      <div className="ml-auto flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
         {/* Notifications */}
         {notificationsHref ? (
-          <Link
-            href={notificationsHref}
-            className="relative w-8 h-8 rounded-[8px] flex items-center justify-center text-[#667085] hover:bg-[#F5F7FA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066B3]"
-            aria-label="Notificações"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-[#E7472E] rounded-full" aria-hidden />
+          <Link href={notificationsHref} className={ICON_BTN} aria-label="Notificações (há novas)">
+            <Bell className="w-5 h-5" aria-hidden />
+            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#C4321C] rounded-full ring-2 ring-surface" aria-hidden />
           </Link>
         ) : (
-          <button
-            type="button"
-            className="relative w-8 h-8 rounded-[8px] flex items-center justify-center text-[#667085] hover:bg-[#F5F7FA] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066B3]"
-            aria-label="Notificações"
-          >
-            <Bell className="w-4 h-4" />
+          <button type="button" className={ICON_BTN} aria-label="Notificações">
+            <Bell className="w-5 h-5" aria-hidden />
           </button>
         )}
 
@@ -80,17 +87,21 @@ export function TopBar({
         {user && (
           <Link
             href={profileHref}
-            className="flex items-center gap-2 pl-3 border-l border-[#E2E8F0] ml-1 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:opacity-80 min-w-0"
+            aria-label={`Meu perfil — ${user.name}`}
+            className="flex items-center gap-2 min-h-11 pl-2 sm:pl-3 pr-1 sm:border-l border-line sm:ml-1 rounded-[4px] hover:bg-canvas transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand min-w-0"
           >
-            <div className="w-7 h-7 rounded-full bg-[#0066B3] flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
+            <div
+              className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0"
+              aria-hidden
+            >
               {initials}
             </div>
-            <div className="hidden sm:block text-left min-w-0">
-              <p className="text-xs font-medium text-[#172033] leading-none truncate">
+            <div className="hidden sm:block text-left min-w-0 max-w-[10rem]" aria-hidden>
+              <p className="text-xs font-medium text-fg leading-none truncate">
                 {user.name.split(" ")[0]}
               </p>
               {user.course && (
-                <p className="text-[10px] text-[#667085] mt-0.5 truncate">{user.course}</p>
+                <p className="text-[11px] text-fg-subtle mt-0.5 truncate">{user.course}</p>
               )}
             </div>
           </Link>

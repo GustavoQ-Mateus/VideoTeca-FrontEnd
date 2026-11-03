@@ -5,10 +5,11 @@ import { AppShell } from "@/components/layout/AppShell";
 import { Badge } from "@/components/ui/Badge";
 import { Heart } from "lucide-react";
 import { student as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
+import { Poster } from "../_components/Poster";
 
 export default function FavoritosPage() {
-  const user = getUser();
+  const user = useAuthUser();
   const [favorites, setFavorites] = useState<any[]>([]);
 
   useEffect(() => { api.favorites().then(d => d && setFavorites(d)); }, []);
@@ -18,10 +19,17 @@ export default function FavoritosPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {favorites.map(f => (
           <Link key={f.id} href={`/aluno/catalogo/${f.id}`}
-            className="bg-white rounded-[14px] border border-[#E2E8F0] p-4 flex gap-4 hover:border-[#0066B3]/40 transition-colors">
-            <div className="w-12 h-16 bg-gradient-to-b from-[#003A70] to-[#0066B3] rounded-[8px] flex-shrink-0" />
+            className="bg-white rounded-[4px] border border-[#E2E8F0] p-4 flex gap-4 hover:border-[#004AF7] transition-colors">
+            <Poster
+              src={f.cover}
+              alt={`Cartaz de ${f.title}`}
+              className="w-12 h-16"
+              iconClassName="w-5 h-5"
+              width={96}
+              height={128}
+            />
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-[#172033] text-sm truncate">{f.title}</p>
+              <p className="font-semibold text-[#0B1B3F] text-sm truncate">{f.title}</p>
               <p className="text-xs text-[#667085]">{f.director} · {f.year}</p>
               <p className="text-xs text-[#667085] mt-1">{f.genre}</p>
               <div className="mt-2"><Badge status={f.status} /></div>

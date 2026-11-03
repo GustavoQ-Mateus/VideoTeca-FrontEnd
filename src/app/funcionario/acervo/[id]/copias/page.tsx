@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { DataTable, Column } from "@/components/ui/DataTable";
 
-const STAFF = { name: "Carla Nogueira", course: "Funcionária" };
 
 const COPIES = [
   { id: "DVD-001", patrimonio: "PAT-8821", state: "Bom", status: "borrowed" },
@@ -41,7 +40,7 @@ export default function CopiasMaterialPage() {
   ];
 
   return (
-    <AppShell role="funcionario" title={film ? `Cópias — ${film.title}` : "Cópias"} user={STAFF}>
+    <AppShell role="funcionario" title={film ? `Cópias — ${film.title}` : "Cópias"}>
       <div className="mb-4">
         <Link href="/funcionario/acervo">
           <Button variant="ghost" size="sm">

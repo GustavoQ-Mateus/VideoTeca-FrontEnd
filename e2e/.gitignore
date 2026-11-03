@@ -1,0 +1,4 @@
+# Artefatos dos testes de aceitação (não versionar; .auth contém tokens)
+.auth/
+.results/
+.report/

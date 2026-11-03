@@ -9,32 +9,45 @@ interface StatCardProps {
   trendUp?: boolean;
   accent?: "blue" | "green" | "red" | "yellow" | "purple";
   className?: string;
+  /** Mostra placeholder de carregamento no lugar do valor. */
+  loading?: boolean;
 }
 
-const ACCENT_STYLES = {
-  blue:   { icon: "bg-[#E8F2FC] text-[#0066B3]", border: "border-l-[#0066B3]" },
-  green:  { icon: "bg-emerald-50 text-emerald-600", border: "border-l-emerald-500" },
-  red:    { icon: "bg-red-50 text-red-600", border: "border-l-red-500" },
-  yellow: { icon: "bg-amber-50 text-amber-600", border: "border-l-amber-500" },
-  purple: { icon: "bg-violet-50 text-violet-600", border: "border-l-violet-500" },
+// Sem ícone em quadrado tintado e sem borda lateral colorida (regras do usuário):
+// cor só quando o número é um estado (ex.: atraso em vermelho).
+const VALUE_COLOR: Record<NonNullable<StatCardProps["accent"]>, string> = {
+  blue: "text-fg",
+  green: "text-fg",
+  yellow: "text-fg",
+  purple: "text-fg",
+  red: "text-danger",
 };
 
-export function StatCard({ label, value, icon: Icon, trend, trendUp, accent = "blue", className }: StatCardProps) {
-  const styles = ACCENT_STYLES[accent];
+export function StatCard({ label, value, icon: Icon, trend, trendUp, accent = "blue", className, loading }: StatCardProps) {
   return (
-    <div className={cn("bg-white rounded-[18px] border border-[#E2E8F0] border-l-4 p-5 flex items-center gap-4", styles.border, className)}>
-      <div className={cn("w-12 h-12 rounded-[14px] flex items-center justify-center flex-shrink-0", styles.icon)}>
-        <Icon className="w-5 h-5" aria-hidden />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-2xl font-bold text-[#172033] leading-none">{value}</p>
-        <p className="text-sm text-[#667085] mt-1">{label}</p>
-        {trend && (
-          <p className={cn("text-xs font-medium mt-0.5", trendUp ? "text-emerald-600" : "text-red-500")}>
-            {trendUp ? "↑" : "↓"} {trend}
-          </p>
+    <div
+      className={cn("bg-surface rounded-[4px] border border-line p-4 sm:p-5 min-w-0", className)}
+      aria-busy={loading || undefined}
+    >
+      <div className="flex flex-col-reverse gap-2">
+        {loading ? (
+          <span className="skeleton block h-8 w-16" aria-hidden />
+        ) : (
+          <p className={cn("text-3xl font-semibold leading-none tabular-nums tracking-tight", VALUE_COLOR[accent])}>{value}</p>
         )}
+        <p className="flex items-center gap-1.5 text-sm text-fg-muted truncate">
+          <Icon className="w-4 h-4 text-brand flex-shrink-0" aria-hidden />
+          {label}
+        </p>
       </div>
+      {loading && <span className="sr-only">Carregando</span>}
+      {trend && !loading && (
+        <p className={cn("text-xs font-medium mt-2", trendUp ? "text-success" : "text-danger")}>
+          <span aria-hidden>{trendUp ? "↑" : "↓"} </span>
+          <span className="sr-only">{trendUp ? "Alta: " : "Queda: "}</span>
+          {trend}
+        </p>
+      )}
     </div>
   );
 }

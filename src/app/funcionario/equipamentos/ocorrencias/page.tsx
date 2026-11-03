@@ -31,7 +31,7 @@ export default function Page() {
       user={{ name: user?.name ?? "", course: "Funcionário" }}
     >
       <div className="space-y-4">
-        <Link className="text-blue-700" href="/funcionario/equipamentos">
+        <Link className="text-[#004AF7]" href="/funcionario/equipamentos">
           Voltar aos equipamentos
         </Link>
         {error && <p role="alert">{error}</p>}
@@ -41,18 +41,18 @@ export default function Page() {
           !rows.length && <p>Nenhuma ocorrência.</p>
         )}
         {rows.map((r) => (
-          <article key={r.id} className="rounded-xl border bg-white p-5">
+          <article key={r.id} className="rounded-[4px] border border-[#E2E8F0] bg-white p-5">
             <h2 className="font-semibold">
               #{r.id} · {r.name}
             </h2>
             <p>{r.full_name}</p>
             {r.late && (
-              <p className="text-red-700">
+              <p className="text-[#B42318]">
                 {r.returned_at ? "Devolvido com atraso" : "Em atraso"}
               </p>
             )}
             {r.damaged_quantity > 0 && (
-              <p className="text-amber-800">
+              <p className="text-[#93370D]">
                 {r.damaged_quantity} unidade(s) avariada(s), indisponíveis para
                 retirada.
               </p>

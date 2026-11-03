@@ -5,10 +5,10 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/providers/ToastProvider";
 import { staff as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
 
 export default function ReservasStaffPage() {
-  const user = getUser();
+  const user = useAuthUser();
   const { toast } = useToast();
   const [reservations, setReservations] = useState<any[]>([]);
 
@@ -22,9 +22,9 @@ export default function ReservasStaffPage() {
 
   return (
     <AppShell role="funcionario" title="Reservas" user={{ name: user?.name ?? "", course: "Funcionário" }}>
-      <div className="bg-white rounded-[18px] border border-[#E2E8F0] overflow-hidden">
+      <div className="bg-white rounded-[4px] border border-[#E2E8F0] overflow-hidden">
         <table className="w-full min-w-[600px] text-sm">
-          <thead className="bg-[#F5F7FA] border-b border-[#E2E8F0]">
+          <thead className="bg-[#F2F5FB] border-b border-[#E2E8F0]">
             <tr>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Aluno</th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Matrícula</th>
@@ -36,8 +36,8 @@ export default function ReservasStaffPage() {
           </thead>
           <tbody className="divide-y divide-[#E2E8F0]">
             {reservations.map(r => (
-              <tr key={r.id} className="hover:bg-[#F5F7FA]">
-                <td className="px-4 py-3 font-medium text-[#172033]">{r.user_name}</td>
+              <tr key={r.id} className="hover:bg-[#F2F5FB]">
+                <td className="px-4 py-3 font-medium text-[#0B1B3F]">{r.user_name}</td>
                 <td className="px-4 py-3 text-[#667085]">{r.registration}</td>
                 <td className="px-4 py-3 text-[#667085]">{r.film}</td>
                 <td className="px-4 py-3 text-[#667085]">{r.requested_at ? new Date(r.requested_at).toLocaleDateString("pt-BR") : "—"}</td>

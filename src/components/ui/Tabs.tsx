@@ -1,9 +1,11 @@
 "use client";
+import { KeyboardEvent, useId, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 export interface TabItem {
   id: string;
   label: string;
+  disabled?: boolean;
 }
 
 interface TabsProps {
@@ -11,29 +13,100 @@ interface TabsProps {
   value: string;
   onChange: (id: string) => void;
   className?: string;
+  /** Rótulo acessível do conjunto de abas. */
+  ariaLabel?: string;
+  /** Prefixo dos ids; use o mesmo em <TabPanel idPrefix>. Padrão: gerado. */
+  idPrefix?: string;
+  /** Se true, cada aba aponta (aria-controls) para o TabPanel correspondente. */
+  withPanels?: boolean;
 }
 
-export function Tabs({ tabs, value, onChange, className }: TabsProps) {
+export const tabId = (prefix: string, id: string) => `${prefix}-tab-${id}`;
+export const tabPanelId = (prefix: string, id: string) => `${prefix}-panel-${id}`;
+
+/**
+ * Abas WAI-ARIA: foco itinerante (roving tabindex), setas ←/→, Home/End.
+ * Ativação automática (a seta já seleciona a aba).
+ */
+export function Tabs({ tabs, value, onChange, className, ariaLabel, idPrefix, withPanels }: TabsProps) {
+  const autoId = useId();
+  const prefix = idPrefix ?? autoId;
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    const enabled = tabs.map((t, i) => (t.disabled ? -1 : i)).filter((i) => i >= 0);
+    if (enabled.length === 0) return;
+    const current = tabs.findIndex((t) => t.id === value);
+    const pos = Math.max(0, enabled.indexOf(current));
+    let next: number | null = null;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = enabled[(pos + 1) % enabled.length];
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = enabled[(pos - 1 + enabled.length) % enabled.length];
+    else if (e.key === "Home") next = enabled[0];
+    else if (e.key === "End") next = enabled[enabled.length - 1];
+    if (next === null) return;
+    e.preventDefault();
+    onChange(tabs[next].id);
+    refs.current[next]?.focus();
+  }
+
   return (
-    <div role="tablist" className={cn("flex gap-1 p-1 bg-[#F5F7FA] rounded-[12px] w-fit flex-wrap", className)}>
-      {tabs.map((t) => {
+    <div
+      role="tablist"
+      aria-label={ariaLabel}
+      onKeyDown={onKeyDown}
+      className={cn("flex gap-6 border-b border-line max-w-full flex-wrap", className)}
+    >
+      {tabs.map((t, i) => {
         const selected = value === t.id;
         return (
           <button
             key={t.id}
+            ref={(el) => {
+              refs.current[i] = el;
+            }}
+            id={tabId(prefix, t.id)}
             type="button"
             role="tab"
             aria-selected={selected}
+            aria-controls={withPanels ? tabPanelId(prefix, t.id) : undefined}
+            tabIndex={selected ? 0 : -1}
+            disabled={t.disabled}
             onClick={() => onChange(t.id)}
             className={cn(
-              "px-4 py-2 rounded-[10px] text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0066B3]",
-              selected ? "bg-white text-[#0066B3] shadow-sm" : "text-[#667085] hover:text-[#172033]"
+              "min-h-11 -mb-px border-b-2 px-0.5 py-2 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50 disabled:cursor-not-allowed",
+              selected ? "border-brand text-brand" : "border-transparent text-fg-muted hover:text-fg"
             )}
           >
             {t.label}
           </button>
         );
       })}
+    </div>
+  );
+}
+
+/** Painel associado a uma aba (use com `<Tabs withPanels idPrefix=...>`). */
+export function TabPanel({
+  idPrefix,
+  tab,
+  children,
+  className,
+}: {
+  idPrefix: string;
+  tab: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      role="tabpanel"
+      id={tabPanelId(idPrefix, tab)}
+      aria-labelledby={tabId(idPrefix, tab)}
+      tabIndex={0}
+      className={cn("focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-control", className)}
+    >
+      {children}
     </div>
   );
 }

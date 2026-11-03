@@ -58,10 +58,10 @@ export function AvailabilityCalendar({
   }
   return (
     <section
-      className="space-y-4 rounded-[18px] border border-slate-200 bg-white p-6"
+      className="space-y-4 rounded-[4px] border border-[#E2E8F0] bg-white p-6"
       aria-label="Disponibilidade de salas"
     >
-      <h2 className="text-lg font-semibold">Encontre um horário livre</h2>
+      <h2 className="text-lg font-semibold text-[#0B1B3F]">Encontre um horário livre</h2>
       <AvailabilityFilters
         value={filters}
         loading={loading}
@@ -73,11 +73,11 @@ export function AvailabilityCalendar({
         }}
       />
       {error && (
-        <p role="alert" className="text-red-700">
+        <p role="alert" className="text-sm text-[#B42318]">
           {error}
         </p>
       )}
-      <div aria-live="polite">
+      <div aria-live="polite" className="text-sm text-[#667085]">
         {loading
           ? "Consultando disponibilidade…"
           : searched && !rooms.length
@@ -85,11 +85,11 @@ export function AvailabilityCalendar({
             : ""}
       </div>
       {rooms.map((room) => (
-        <article key={room.id} className="border-t border-slate-200 pt-4">
-          <h3 className="font-semibold">
+        <article key={room.id} className="border-t border-[#E2E8F0] pt-4">
+          <h3 className="font-semibold text-[#0B1B3F]">
             {room.name} · {room.capacity} lugares
           </h3>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-[#3D4A66]">
             {room.equipment?.join(", ") || "Sem recursos cadastrados"}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -105,7 +105,7 @@ export function AvailabilityCalendar({
                 </Button>
               ))
             ) : (
-              <p>Sem horários livres nesta data.</p>
+              <p className="text-sm text-[#667085]">Sem horários livres nesta data.</p>
             )}
           </div>
         </article>

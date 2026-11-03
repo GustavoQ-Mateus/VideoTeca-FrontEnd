@@ -7,12 +7,12 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/providers/ToastProvider";
 import { professor as api, fetchCatalogFilms } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
 
 export default function SolicitarFilmePage() {
-  const user = getUser();
+  const user = useAuthUser();
   const { toast } = useToast();
-  const [films,   setFilms]   = useState<any[]>([]);
+  const [films,   setFilms]   = useState<{ id: number; title: string; year?: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -31,8 +31,8 @@ export default function SolicitarFilmePage() {
       await api.requestFilm({ film_id, date, notes });
       toast({ title: "Solicitação enviada", description: "A Videoteca analisará e responderá pelo sistema.", variant: "success" });
       formRef.current?.reset();
-    } catch (err: any) {
-      toast({ title: "Erro", description: err.message, variant: "error" });
+    } catch (err) {
+      toast({ title: "Erro", description: err instanceof Error ? err.message : String(err), variant: "error" });
     } finally {
       setLoading(false);
     }
@@ -40,7 +40,7 @@ export default function SolicitarFilmePage() {
 
   return (
     <AppShell role="professor" title="Solicitar filme para aula" user={{ name: user?.name ?? "", course: user?.course ?? "" }}>
-      <form ref={formRef} onSubmit={handleSubmit} className="max-w-2xl bg-white rounded-[18px] border border-[#E2E8F0] p-6 space-y-4">
+      <form ref={formRef} onSubmit={handleSubmit} className="max-w-2xl bg-white rounded-[4px] border border-[#E2E8F0] p-6 space-y-4">
         <Select name="film_id" label="Filme" required defaultValue="">
           <option value="" disabled>Selecione…</option>
           {films.map(f => (

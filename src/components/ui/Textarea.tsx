@@ -1,34 +1,58 @@
 "use client";
-import { forwardRef } from "react";
+import { forwardRef, useId } from "react";
 import { cn } from "@/lib/utils";
+import { FIELD_BASE, FIELD_ERROR, joinIds } from "./Input";
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
+  /** Texto de ajuda associado via aria-describedby. */
+  helper?: string;
+  /** Esconde o rótulo visualmente (continua acessível). */
+  hideLabel?: boolean;
+  containerClassName?: string;
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, label, error, id, ...props }, ref) => {
-    const tid = id ?? props.name;
+  (
+    { className, label, error, helper, hideLabel, containerClassName, id, "aria-describedby": describedBy, ...props },
+    ref
+  ) => {
+    const autoId = useId();
+    const tid = id ?? props.name ?? autoId;
+    const errorId = `${tid}-error`;
+    const helperId = `${tid}-helper`;
     return (
-      <div className="w-full">
+      <div className={cn("w-full", containerClassName)}>
         {label && (
-          <label htmlFor={tid} className="block text-sm font-medium text-[#172033] mb-1.5">
+          <label htmlFor={tid} className={cn("block text-sm font-medium text-fg mb-1.5", hideLabel && "sr-only")}>
             {label}
+            {props.required && (
+              <>
+                <span className="text-danger ml-1" aria-hidden>*</span>
+                <span className="sr-only"> (obrigatório)</span>
+              </>
+            )}
           </label>
         )}
         <textarea
           ref={ref}
           id={tid}
-          className={cn(
-            "w-full min-h-[100px] px-3 py-2 rounded-[10px] border border-[#E2E8F0] bg-white text-sm text-[#172033]",
-            "placeholder:text-[#667085] focus:outline-none focus:border-[#0066B3] focus:ring-2 focus:ring-[#0066B3]/20",
-            error && "border-red-400",
-            className
-          )}
+          className={cn(FIELD_BASE, "min-h-[100px] px-3 py-2", error && FIELD_ERROR, className)}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={joinIds(error && errorId, helper && helperId, describedBy)}
           {...props}
         />
-        {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+        {error && (
+          <p id={errorId} className="text-xs text-danger mt-1" role="alert">
+            {error}
+          </p>
+        )}
+        {helper && (
+          <p id={helperId} className={cn("text-xs text-fg-subtle mt-1", error && "sr-only")}>
+            {helper}
+          </p>
+        )}
       </div>
     );
   }

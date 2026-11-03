@@ -1,9 +1,7 @@
 import { notFound } from "next/navigation";
-import { AppShell } from "@/components/layout/AppShell";
+import { AlunoShell } from "../../_components/AlunoShell";
 import { fetchFilmById } from "@/lib/api";
 import { FilmDetailView } from "@/components/catalog/FilmDetailView";
-
-const STUDENT = { name: "Ana Clara Mendes", course: "Cinema e Audiovisual" };
 
 export default async function StudentFilmDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -13,7 +11,7 @@ export default async function StudentFilmDetail({ params }: { params: Promise<{ 
   if (!film) notFound();
 
   return (
-    <AppShell role="aluno" title={film.title} showSearch user={STUDENT}>
+    <AlunoShell title={film.title} showSearch>
       <FilmDetailView
         film={film}
         mode="aluno"
@@ -24,6 +22,6 @@ export default async function StudentFilmDetail({ params }: { params: Promise<{ 
           { label: film.title },
         ]}
       />
-    </AppShell>
+    </AlunoShell>
   );
 }

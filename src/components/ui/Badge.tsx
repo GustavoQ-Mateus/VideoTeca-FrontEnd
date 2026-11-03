@@ -1,18 +1,40 @@
 "use client";
 import { cn, STATUS_LABELS, STATUS_COLORS } from "@/lib/utils";
 
+export type BadgeTone = "neutral" | "brand" | "success" | "warning" | "danger" | "info";
+
 interface BadgeProps {
+  /** Chave de status (ver STATUS_LABELS/STATUS_COLORS em lib/utils). */
   status?: string;
   label?: string;
   className?: string;
+  /** Cor semântica quando não há `status`. */
+  tone?: BadgeTone;
+  size?: "sm" | "md";
 }
 
-export function Badge({ status, label, className }: BadgeProps) {
-  const colorClass = status ? STATUS_COLORS[status] ?? "bg-slate-100 text-slate-600" : "";
-  const text = label ?? (status ? STATUS_LABELS[status] : "");
+// Status como texto na cor semântica, sem pílula nem fundo (regras do usuário).
+const TONES: Record<BadgeTone, string> = {
+  neutral: "text-fg-muted",
+  brand:   "text-brand",
+  success: "text-success",
+  warning: "text-warning",
+  danger:  "text-danger",
+  info:    "text-info",
+};
+
+// STATUS_COLORS traz pares fundo/texto; aqui só a cor do texto é usada.
+const textOnly = (classes: string) => classes.split(/\s+/).filter((c) => c.startsWith("text-")).join(" ");
+
+export function Badge({ status, label, className, tone, size = "md" }: BadgeProps) {
+  const colorClass = status
+    ? textOnly(STATUS_COLORS[status] ?? "") || TONES.neutral
+    : tone
+      ? TONES[tone]
+      : TONES.neutral;
+  const text = label ?? (status ? STATUS_LABELS[status] ?? status : "");
   return (
-    <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium", colorClass, className)}>
-      {status ? <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" /> : null}
+    <span className={cn("inline-flex items-center font-medium whitespace-nowrap", size === "sm" ? "text-xs" : "text-sm", colorClass, className)}>
       {text}
     </span>
   );

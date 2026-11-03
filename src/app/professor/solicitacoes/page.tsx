@@ -4,12 +4,12 @@ import { AppShell } from "@/components/layout/AppShell";
 import { Badge } from "@/components/ui/Badge";
 import { DataTable, Column } from "@/components/ui/DataTable";
 import { professor as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
 
 type Row = {
   id: number;
   request_type: string;
-  payload: any;
+  payload?: { film_title?: string; room_name?: string };
   status: string;
   staff_notes: string;
   created_at: string;
@@ -36,7 +36,7 @@ const columns: Column<Row>[] = [
 ];
 
 export default function ProfessorSolicitacoesPage() {
-  const user = getUser();
+  const user = useAuthUser();
   const [rows, setRows] = useState<Row[]>([]);
 
   useEffect(() => {

@@ -2,9 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Film, MapPin, Users, Calendar, Award } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import type { EventRecord } from "@/lib/types";
-
-function getEventById(_id: number): EventRecord | undefined { return undefined; }
+import { Wordmark } from "@/components/catalog/Brand";
+import { publishedEvent } from "@/lib/public-events";
 
 const NAV_LINKS = [
   { label: "Catálogo", href: "/catalogo" },
@@ -12,28 +11,33 @@ const NAV_LINKS = [
   { label: "Sobre", href: "/sobre" },
 ] as const;
 
-export default async function PublicEventDetail({ params }: { params: Promise<{ id: string }> }) {
+export default async function PublicEventDetail({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const num = Number(id);
   if (Number.isNaN(num)) notFound();
-  const event = getEventById(num);
+  const event = await publishedEvent(num);
   if (!event) notFound();
 
   const spots = event.slots - event.enrolled;
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA]">
+    <div className="min-h-screen bg-white">
       <header className="bg-white border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-[#0066B3] rounded-[8px] flex items-center justify-center">
-              <Film className="w-3.5 h-3.5 text-white" aria-hidden />
-            </div>
-            <span className="text-sm font-bold text-[#003A70]">Videoteca Unifor</span>
+          <Link href="/" aria-label="Videoteca Unifor — início">
+            <Wordmark />
           </Link>
           <nav className="hidden md:flex gap-1 ml-6" aria-label="Navegação">
             {NAV_LINKS.map((l) => (
-              <Link key={l.href} href={l.href} className="px-3 py-2 text-sm text-[#667085] hover:text-[#172033] rounded-[8px] font-medium">
+              <Link
+                key={l.href}
+                href={l.href}
+                className="px-3 py-2 text-sm text-[#667085] hover:text-[#0B1B3F] rounded-[4px] font-medium"
+              >
                 {l.label}
               </Link>
             ))}
@@ -46,59 +50,79 @@ export default async function PublicEventDetail({ params }: { params: Promise<{ 
         </div>
       </header>
 
-      <div className="relative h-48 sm:h-64 bg-gradient-to-br from-[#003A70] to-violet-700">
+      <div className="relative h-48 sm:h-64 bg-[#004AF7]">
         <div className="absolute inset-0 flex items-end p-6 sm:p-10 max-w-7xl mx-auto w-full">
           <div>
-            <span className="mb-3 inline-block text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-3 py-1 rounded-full">
+            <span className="mb-3 inline-block text-xs font-semibold bg-white text-[#004AF7] px-2.5 py-1 rounded-[4px]">
               {event.type}
             </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white max-w-3xl leading-tight">{event.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white max-w-3xl leading-tight">
+              {event.title}
+            </h1>
           </div>
         </div>
       </div>
 
       <div className="max-w-3xl mx-auto px-6 -mt-8 relative z-10 pb-16">
-        <div className="bg-white rounded-[20px] border border-[#E2E8F0] shadow-lg p-6 sm:p-8 space-y-6">
+        <div className="bg-white rounded-[4px] border border-[#E2E8F0] p-6 sm:p-8 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div className="flex gap-2 text-[#667085]">
               <Film className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
               <div>
-                <p className="text-xs font-semibold uppercase">Filme</p>
-                <p className="text-[#172033] font-medium">{event.film}</p>
+                <p className="text-xs font-medium">Filme</p>
+                <p className="text-[#0B1B3F] font-medium">{event.film}</p>
               </div>
             </div>
             <div className="flex gap-2 text-[#667085]">
               <Calendar className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
               <div>
-                <p className="text-xs font-semibold uppercase">Data e horário</p>
-                <p className="text-[#172033] font-medium">
-                  {new Date(event.date).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })} · {event.time}
+                <p className="text-xs font-medium">
+                  Data e horário
+                </p>
+                <p className="text-[#0B1B3F] font-medium">
+                  {new Date(event.date).toLocaleDateString("pt-BR", {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                    timeZone: "America/Fortaleza",
+                  })}{" "}
+                  · {event.time}
                 </p>
               </div>
             </div>
             <div className="flex gap-2 text-[#667085]">
               <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
               <div>
-                <p className="text-xs font-semibold uppercase">Local</p>
-                <p className="text-[#172033] font-medium">{event.location}</p>
+                <p className="text-xs font-medium">Local</p>
+                <p className="text-[#0B1B3F] font-medium">{event.location}</p>
               </div>
             </div>
             <div className="flex gap-2 text-[#667085]">
               <Users className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
               <div>
-                <p className="text-xs font-semibold uppercase">Vagas</p>
-                <p className="text-[#172033] font-medium">{spots > 0 ? `${spots} disponíveis` : "Lotado"}</p>
+                <p className="text-xs font-medium">Vagas</p>
+                <p className="text-[#0B1B3F] font-medium">
+                  {spots > 0 ? `${spots} disponíveis` : "Lotado"}
+                </p>
               </div>
             </div>
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-[#172033] mb-2">Sobre o evento</h2>
-            <p className="text-[#667085] leading-relaxed">{event.description}</p>
+            <h2 className="text-sm font-semibold text-[#0B1B3F] mb-2">
+              Sobre o evento
+            </h2>
+            <p className="text-[#667085] leading-relaxed">
+              {event.description}
+            </p>
           </div>
           {event.certificate && (
-            <div className="flex gap-2 rounded-[12px] bg-[#E8F2FC] border border-[#0066B3]/20 px-4 py-3 text-sm text-[#0066B3]">
+            <div className="flex gap-2 rounded-[4px] bg-[#EBF0FF] border border-[#004AF7]/20 px-4 py-3 text-sm text-[#004AF7]">
               <Award className="w-5 h-5 flex-shrink-0" aria-hidden />
-              <span>Certificado de participação disponível mediante presença e check-in.</span>
+              <span>
+                Certificado de participação disponível mediante presença e
+                check-in.
+              </span>
             </div>
           )}
           <div className="flex flex-wrap gap-3 pt-2">

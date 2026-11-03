@@ -1,0 +1,114 @@
+name: Testes de aceitação (E2E)
+on:
+  workflow_dispatch:
+    inputs:
+      backend_ref:
+        description: Branch/tag do VideoTeca-BackEnd
+        default: developer
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: local-ci-only
+          POSTGRES_DB: videoteca
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:local-ci-only@localhost:5432/videoteca
+      PGPASSWORD: local-ci-only
+      E2E_BASE_URL: http://127.0.0.1:3000
+      E2E_API_URL: http://127.0.0.1:8000
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:8000
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout do backend
+        uses: actions/checkout@v4
+        with:
+          repository: GustavoQ-Mateus/VideoTeca-BackEnd
+          ref: ${{ inputs.backend_ref }}
+          path: backend
+          # Repositório privado: configure o secret BACKEND_REPO_TOKEN (leitura).
+          token: ${{ secrets.BACKEND_REPO_TOKEN || github.token }}
+
+      - name: Migrations + seed de desenvolvimento
+        run: |
+          for f in backend/db/migrations/*.sql; do
+            echo "::group::$f"
+            psql -h localhost -U postgres -d videoteca -v ON_ERROR_STOP=1 -f "$f"
+            echo "::endgroup::"
+          done
+          psql -h localhost -U postgres -d videoteca -v ON_ERROR_STOP=1 -f backend/db/seed/seed_dev.sql
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Sobe a API (uvicorn)
+        working-directory: backend
+        env:
+          CORS_ORIGINS: http://127.0.0.1:3000
+          JWT_SECRET: e2e-only-secret-not-for-production-0123456789
+          ENVIRONMENT: development
+        run: |
+          pip install -r requirements.txt
+          nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 > ../api.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:8000/health && exit 0
+            sleep 1
+          done
+          cat ../api.log; exit 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build do front-end
+        run: npm run build
+
+      - name: Sobe o front-end (standalone)
+        run: |
+          cp -r .next/static .next/standalone/.next/static
+          [ -d public ] && cp -r public .next/standalone/public || true
+          PORT=3000 HOSTNAME=127.0.0.1 nohup node .next/standalone/server.js > web.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fsS -o /dev/null http://127.0.0.1:3000/login && exit 0
+            sleep 1
+          done
+          cat web.log; exit 1
+
+      - run: npx playwright install --with-deps chromium
+      - name: Playwright
+        env:
+          E2E_SKIP_WEBSERVER: '1'
+        run: npm run test:e2e
+
+      - name: Logs
+        if: failure()
+        run: |
+          echo "--- api.log"; tail -n 200 api.log || true
+          echo "--- web.log"; tail -n 200 web.log || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: |
+            e2e/.report
+            e2e/.results
+          retention-days: 7

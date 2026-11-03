@@ -20,15 +20,15 @@ export default function PerfilAlunoPage() {
       <div className="max-w-2xl space-y-6">
         <div
           key={user?.id ?? "anon"}
-          className="bg-white rounded-[18px] border border-[#E2E8F0] p-6 space-y-4"
+          className="bg-white rounded-[4px] border border-[#E2E8F0] p-6 space-y-4"
         >
-          <h2 className="font-semibold text-[#172033]">Dados cadastrais</h2>
+          <h2 className="font-semibold text-[#0B1B3F]">Dados cadastrais</h2>
           <Input label="Nome completo" defaultValue={user?.name ?? ""} />
           <Input
             label="Matrícula"
             defaultValue={user?.registration ?? ""}
             readOnly
-            className="bg-[#F5F7FA]"
+            className="bg-[#F2F5FB]"
           />
           <Select label="Curso" id="curso" defaultValue={course}>
             {course && !COURSES.includes(course) && (
@@ -43,8 +43,8 @@ export default function PerfilAlunoPage() {
           <Input label="E-mail" type="email" defaultValue={user?.email ?? ""} />
           <Input label="Telefone" defaultValue={user?.phone ?? ""} />
         </div>
-        <div className="bg-white rounded-[18px] border border-[#E2E8F0] p-6 space-y-3">
-          <h2 className="font-semibold text-[#172033]">Notificações</h2>
+        <div className="bg-white rounded-[4px] border border-[#E2E8F0] p-6 space-y-3">
+          <h2 className="font-semibold text-[#0B1B3F]">Notificações</h2>
           <Checkbox label="Reservas e empréstimos" defaultChecked />
           <Checkbox label="Prazos e atrasos" defaultChecked />
           <Checkbox label="Eventos e cineclubes" defaultChecked />

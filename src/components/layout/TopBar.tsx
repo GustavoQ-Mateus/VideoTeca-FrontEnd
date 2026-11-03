@@ -19,7 +19,7 @@ interface TopBarProps {
 }
 
 const ICON_BTN =
-  "relative w-11 h-11 rounded-[10px] flex items-center justify-center text-fg-subtle hover:bg-canvas hover:text-fg " +
+  "relative w-11 h-11 rounded-[4px] flex items-center justify-center text-fg-subtle hover:bg-canvas hover:text-fg " +
   "transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand flex-shrink-0";
 
 export function TopBar({
@@ -36,7 +36,7 @@ export function TopBar({
   const initials = user?.name.split(" ").map(n => n[0]).slice(0, 2).join("") ?? "U";
 
   return (
-    <header className="sticky top-0 z-30 h-14 bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/85 border-b border-line flex items-center px-2 sm:px-6 gap-1 sm:gap-3 flex-shrink-0">
+    <header className="sticky top-0 z-30 h-14 bg-surface border-b border-line flex items-center px-2 sm:px-6 gap-1 sm:gap-3 flex-shrink-0">
 
       {/* Mobile menu toggle */}
       <button
@@ -63,7 +63,7 @@ export function TopBar({
             <input
               type="search"
               placeholder="Buscar no catálogo..."
-              className="w-full h-10 pl-9 pr-3 text-sm rounded-[10px] border border-line-strong bg-canvas text-fg placeholder:text-fg-subtle focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/25 focus:bg-surface transition-colors"
+              className="w-full h-10 pl-9 pr-3 text-sm rounded-[4px] border border-line-strong bg-canvas text-fg placeholder:text-fg-subtle focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/25 focus:bg-surface transition-colors"
               aria-label="Buscar no catálogo"
             />
           </div>
@@ -88,7 +88,7 @@ export function TopBar({
           <Link
             href={profileHref}
             aria-label={`Meu perfil — ${user.name}`}
-            className="flex items-center gap-2 min-h-11 pl-2 sm:pl-3 pr-1 sm:border-l border-line sm:ml-1 rounded-[10px] hover:bg-canvas transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand min-w-0"
+            className="flex items-center gap-2 min-h-11 pl-2 sm:pl-3 pr-1 sm:border-l border-line sm:ml-1 rounded-[4px] hover:bg-canvas transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand min-w-0"
           >
             <div
               className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white text-[11px] font-bold flex-shrink-0"

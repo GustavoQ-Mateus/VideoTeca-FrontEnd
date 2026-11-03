@@ -75,25 +75,25 @@ export default function Page() {
       user={{ name: user?.name ?? "", course: "Funcionário" }}
     >
       <div className="max-w-3xl space-y-6">
-        <nav className="flex gap-4 text-blue-700">
+        <nav className="flex gap-4 text-[#004AF7]">
           <Link href="/funcionario/equipamentos/devolucoes">Devoluções</Link>
           <Link href="/funcionario/equipamentos/ocorrencias">
             Atrasos e avarias
           </Link>
         </nav>
         {error && (
-          <p role="alert" className="text-red-700">
+          <p role="alert" className="text-[#B42318]">
             {error}
           </p>
         )}
         {success && (
-          <p role="status" className="text-emerald-800">
+          <p role="status" className="text-[#067647]">
             {success}
           </p>
         )}
         <form
           onSubmit={(e) => submit(e)}
-          className="space-y-4 rounded-2xl border bg-white p-6"
+          className="space-y-4 rounded-[4px] border border-[#E2E8F0] bg-white p-6"
         >
           <h2 className="font-semibold">Registrar retirada</h2>
           <Select
@@ -133,7 +133,7 @@ export default function Page() {
             Confirmar retirada
           </Button>
         </form>
-        <details className="rounded-2xl border bg-white p-6">
+        <details className="rounded-[4px] border border-[#E2E8F0] bg-white p-6">
           <summary className="cursor-pointer font-semibold">
             Cadastrar equipamento
           </summary>

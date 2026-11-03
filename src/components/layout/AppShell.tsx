@@ -6,6 +6,9 @@ import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { Breadcrumbs, type Crumb } from "@/components/ui/Breadcrumbs";
+import { useAuthUser } from "@/lib/use-auth-user";
+
+const ROLE_NAME = { aluno: "Aluno", professor: "Professor", funcionario: "Funcionário", admin: "Administrador" } as const;
 
 interface AppShellProps {
   role: "aluno" | "professor" | "funcionario";
@@ -68,6 +71,9 @@ function setCollapsedPref(value: boolean) {
  * - `<main id="main-content">` é o alvo do link "Pular para o conteúdo".
  */
 export function AppShell({ role, title, showSearch, user, children, breadcrumbs, mainClassName }: AppShellProps) {
+  // Sem `user` explícito, mostra quem está logado (nunca um nome fixo).
+  const authUser = useAuthUser();
+  const shownUser = user?.name ? user : authUser ? { name: authUser.name, course: authUser.course || ROLE_NAME[authUser.role] } : undefined;
   const [mobileOpen, setMobileOpen] = useState(false);
   const isDesktop = useSyncExternalStore(subscribeDesktop, getDesktop, getDesktopServer);
   const collapsed = useSyncExternalStore(subscribeCollapsed, getCollapsed, getCollapsedServer);
@@ -139,7 +145,7 @@ export function AppShell({ role, title, showSearch, user, children, breadcrumbs,
     <div className="flex min-h-screen bg-canvas">
       {drawerOpen && (
         <div
-          className="fixed inset-0 z-40 bg-[#101828]/50 backdrop-blur-[1px] lg:hidden motion-fade"
+          className="fixed inset-0 z-40 bg-[#101828]/50 lg:hidden motion-fade"
           aria-hidden="true"
           onClick={closeMobile}
         />
@@ -171,7 +177,7 @@ export function AppShell({ role, title, showSearch, user, children, breadcrumbs,
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar
           title={title}
-          user={user}
+          user={shownUser}
           showSearch={showSearch}
           onMenuClick={() => setMobileOpen(true)}
           menuButtonRef={menuButtonRef}

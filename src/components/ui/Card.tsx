@@ -15,7 +15,7 @@ export function Card({ className, hover, padded, ...props }: CardProps) {
         "bg-surface rounded-card border border-line",
         padded && "p-4 sm:p-6",
         hover &&
-          "transition-[box-shadow,transform] duration-200 motion-reduce:transition-none hover:shadow-[0_8px_24px_rgba(0,102,179,0.12)] hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 cursor-pointer focus-within:shadow-[0_8px_24px_rgba(0,102,179,0.12)]",
+          "transition-[box-shadow,transform] duration-200 motion-reduce:transition-none hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 cursor-pointer focus-within:",
         className
       )}
       {...props}

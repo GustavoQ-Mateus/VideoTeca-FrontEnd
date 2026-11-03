@@ -51,7 +51,7 @@ export function Drawer({
         aria-describedby={description ? descId : undefined}
         tabIndex={-1}
         className={cn(
-          "absolute top-0 bottom-0 w-[min(100%,28rem)] bg-surface shadow-2xl border-line flex flex-col focus:outline-none",
+          "absolute top-0 bottom-0 w-[min(100%,28rem)] bg-surface border-line flex flex-col focus:outline-none",
           side === "right" ? "right-0 border-l motion-right" : "left-0 border-r motion-left",
           className
         )}

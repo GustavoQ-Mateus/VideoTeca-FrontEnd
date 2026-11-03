@@ -12,7 +12,7 @@ interface PaginationBarProps {
 }
 
 const BTN =
-  "inline-flex items-center justify-center min-h-11 min-w-11 sm:min-h-9 sm:min-w-9 rounded-[10px] text-sm font-medium " +
+  "inline-flex items-center justify-center min-h-11 min-w-11 sm:min-h-9 sm:min-w-9 rounded-[4px] text-sm font-medium " +
   "transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand";
 
 /** Paginação acessível: <nav>, rótulos por página, aria-current e anúncio da página atual. */

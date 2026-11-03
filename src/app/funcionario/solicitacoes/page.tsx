@@ -5,12 +5,12 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/providers/ToastProvider";
 import { staff as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
 
 const TYPE_LABEL: Record<string, string> = { film: "Filme", room: "Sala" };
 
 export default function SolicitacoesStaffPage() {
-  const user = getUser();
+  const user = useAuthUser();
   const { toast } = useToast();
   const [requests, setRequests] = useState<any[]>([]);
 
@@ -24,9 +24,9 @@ export default function SolicitacoesStaffPage() {
 
   return (
     <AppShell role="funcionario" title="Solicitações de Professores" user={{ name: user?.name ?? "", course: "Funcionário" }}>
-      <div className="bg-white rounded-[18px] border border-[#E2E8F0] overflow-hidden">
+      <div className="bg-white rounded-[4px] border border-[#E2E8F0] overflow-hidden">
         <table className="w-full min-w-[700px] text-sm">
-          <thead className="bg-[#F5F7FA] border-b border-[#E2E8F0]">
+          <thead className="bg-[#F2F5FB] border-b border-[#E2E8F0]">
             <tr>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Professor</th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Tipo</th>
@@ -38,8 +38,8 @@ export default function SolicitacoesStaffPage() {
           </thead>
           <tbody className="divide-y divide-[#E2E8F0]">
             {requests.map(r => (
-              <tr key={r.id} className="hover:bg-[#F5F7FA]">
-                <td className="px-4 py-3 font-medium text-[#172033]">{r.professor_name}</td>
+              <tr key={r.id} className="hover:bg-[#F2F5FB]">
+                <td className="px-4 py-3 font-medium text-[#0B1B3F]">{r.professor_name}</td>
                 <td className="px-4 py-3 text-[#667085]">{TYPE_LABEL[r.request_type] ?? r.request_type}</td>
                 <td className="px-4 py-3 text-[#667085]">{r.payload?.film_title ?? r.payload?.room_name ?? "—"}</td>
                 <td className="px-4 py-3 text-[#667085]">{new Date(r.created_at).toLocaleDateString("pt-BR")}</td>

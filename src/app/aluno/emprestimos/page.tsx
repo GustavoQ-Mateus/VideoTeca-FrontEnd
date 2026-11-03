@@ -1,17 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { AppShell } from "@/components/layout/AppShell";
 import { Tabs } from "@/components/ui/Tabs";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { Film, Clock, AlertTriangle } from "lucide-react";
 import { AlertBanner } from "@/components/ui/AlertBanner";
 import { student as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
+import { Poster } from "../_components/Poster";
 
 export default function EmprestimosAlunoPage() {
-  const user = getUser();
+  const user = useAuthUser();
   const [tab,   setTab]   = useState("ativos");
   const [loans, setLoans] = useState<any[]>([]);
 
@@ -38,24 +37,29 @@ export default function EmprestimosAlunoPage() {
       {tab === "ativos" && (
         <div className="space-y-4">
           {active.map(l => (
-            <div key={l.id} className={`rounded-[18px] border p-5 flex flex-col sm:flex-row gap-4 ${l.status === "late" ? "border-red-200 bg-red-50/50" : "border-[#E2E8F0] bg-white"}`}>
-              <div className="w-12 h-16 bg-gradient-to-b from-[#0066B3] to-[#003A70] rounded-[10px] flex items-center justify-center flex-shrink-0">
-                <Film className="w-6 h-6 text-white/30" aria-hidden />
-              </div>
+            <div key={l.id} className={`rounded-[4px] border p-5 flex flex-col sm:flex-row gap-4 ${l.status === "late" ? "border-[#FECDCA] bg-[#FEF3F2]" : "border-[#E2E8F0] bg-white"}`}>
+              <Poster
+                src={l.cover}
+                alt={`Cartaz de ${l.film}`}
+                className="w-12 h-16"
+                iconClassName="w-6 h-6"
+                width={96}
+                height={128}
+              />
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-[#172033]">{l.film}</p>
+                <p className="font-semibold text-[#0B1B3F]">{l.film}</p>
                 <p className="text-sm text-[#667085]">{l.copy}</p>
                 <div className="flex flex-wrap gap-4 mt-2 text-xs text-[#667085]">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" aria-hidden />
                     Retirada: {l.borrowed_at ? new Date(l.borrowed_at).toLocaleDateString("pt-BR") : "—"}
                   </span>
-                  <span className="flex items-center gap-1 font-medium text-[#172033]">
+                  <span className="flex items-center gap-1 font-medium text-[#0B1B3F]">
                     Devolução: {l.due_at ? new Date(l.due_at).toLocaleDateString("pt-BR") : "—"}
                   </span>
                 </div>
                 {l.status === "late" && (
-                  <p className="text-xs text-red-600 mt-2 flex items-center gap-1">
+                  <p className="text-xs text-[#B42318] mt-2 flex items-center gap-1">
                     <AlertTriangle className="w-3.5 h-3.5" aria-hidden />
                     Atraso — diárias podem ser aplicadas conforme regulamento.
                   </p>
@@ -76,9 +80,9 @@ export default function EmprestimosAlunoPage() {
       )}
 
       {tab === "historico" && (
-        <div className="bg-white rounded-[18px] border border-[#E2E8F0] overflow-hidden">
+        <div className="bg-white rounded-[4px] border border-[#E2E8F0] overflow-hidden">
           <table className="w-full min-w-[480px] text-sm">
-            <thead className="bg-[#F5F7FA] border-b border-[#E2E8F0]">
+            <thead className="bg-[#F2F5FB] border-b border-[#E2E8F0]">
               <tr>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Título</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Devolvido</th>
@@ -88,7 +92,7 @@ export default function EmprestimosAlunoPage() {
             <tbody className="divide-y divide-[#E2E8F0]">
               {history.map(h => (
                 <tr key={h.id}>
-                  <td className="px-4 py-3 font-medium text-[#172033]">{h.film}</td>
+                  <td className="px-4 py-3 font-medium text-[#0B1B3F]">{h.film}</td>
                   <td className="px-4 py-3 text-[#667085]">{h.returned_at ? new Date(h.returned_at).toLocaleDateString("pt-BR") : "—"}</td>
                   <td className="px-4 py-3"><Badge status="returned" /></td>
                 </tr>

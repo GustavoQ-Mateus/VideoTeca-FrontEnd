@@ -75,7 +75,7 @@ export function PublishButton({
         <div
           id={errorId}
           role="alert"
-          className="mt-2 max-w-md rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+          className="mt-2 max-w-md rounded-[4px] border border-[#FECDCA] bg-[#FEF3F2] p-3 text-sm text-[#B42318]"
         >
           <p className="font-semibold">
             {blocked.rights
@@ -89,7 +89,7 @@ export function PublishButton({
               (titular e validade que cubra a data da sessão) e anexe o
               comprovante.{" "}
               <Link
-                className="font-medium text-blue-800 underline"
+                className="font-medium text-[#004AF7] underline"
                 href={
                   blocked.filmId
                     ? `/funcionario/acervo?filme=${blocked.filmId}`

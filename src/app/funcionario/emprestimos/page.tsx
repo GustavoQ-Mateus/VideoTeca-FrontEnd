@@ -7,10 +7,10 @@ import { Badge } from "@/components/ui/Badge";
 import { useToast } from "@/components/providers/ToastProvider";
 import { Film, Clock } from "lucide-react";
 import { staff as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
 
 export default function EmprestimosBalcaoPage() {
-  const user = getUser();
+  const user = useAuthUser();
   const { toast } = useToast();
   const [loans,      setLoans]      = useState<any[]>([]);
   const [matricula,  setMatricula]  = useState("");
@@ -60,16 +60,16 @@ export default function EmprestimosBalcaoPage() {
 
         {/* Registro */}
         <div className="space-y-4">
-          <div className="bg-white rounded-[18px] border border-[#E2E8F0] p-5">
-            <h2 className="font-semibold text-[#172033] mb-3">Registrar empréstimo</h2>
+          <div className="bg-white rounded-[4px] border border-[#E2E8F0] p-5">
+            <h2 className="font-semibold text-[#0B1B3F] mb-3">Registrar empréstimo</h2>
             <Input label="Matrícula do aluno" value={matricula} onChange={e => setMatricula(e.target.value)} placeholder="Ex: 2024001234" />
             <Button className="w-full mt-3" onClick={searchUser} disabled={searching}>
               {searching ? "Buscando..." : "Buscar aluno"}
             </Button>
 
             {foundUser && (
-              <div className="mt-4 p-3 rounded-[12px] bg-[#F5F7FA] text-sm">
-                <p className="font-medium text-[#172033]">{foundUser.full_name}</p>
+              <div className="mt-4 p-3 rounded-[4px] bg-[#F2F5FB] text-sm">
+                <p className="font-medium text-[#0B1B3F]">{foundUser.full_name}</p>
                 <p className="text-xs text-[#667085]">{foundUser.course} · {foundUser.registration}</p>
               </div>
             )}
@@ -85,10 +85,10 @@ export default function EmprestimosBalcaoPage() {
 
         {/* Lista de empréstimos ativos */}
         <div className="xl:col-span-2">
-          <h3 className="font-semibold text-[#172033] mb-3">Empréstimos em aberto</h3>
-          <div className="bg-white rounded-[18px] border border-[#E2E8F0] overflow-hidden">
+          <h3 className="font-semibold text-[#0B1B3F] mb-3">Empréstimos em aberto</h3>
+          <div className="bg-white rounded-[4px] border border-[#E2E8F0] overflow-hidden">
             <table className="w-full min-w-[500px] text-sm">
-              <thead className="bg-[#F5F7FA] border-b border-[#E2E8F0]">
+              <thead className="bg-[#F2F5FB] border-b border-[#E2E8F0]">
                 <tr>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Título</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Aluno</th>
@@ -100,14 +100,14 @@ export default function EmprestimosBalcaoPage() {
               <tbody className="divide-y divide-[#E2E8F0]">
                 {active.map(l => (
                   <tr key={l.id}>
-                    <td className="px-4 py-3 font-medium text-[#172033]">{l.film}</td>
+                    <td className="px-4 py-3 font-medium text-[#0B1B3F]">{l.film}</td>
                     <td className="px-4 py-3 text-[#667085]">{l.user_name}</td>
                     <td className="px-4 py-3 text-[#667085]">
                       {l.due_at ? new Date(l.due_at).toLocaleDateString("pt-BR") : "—"}
                     </td>
                     <td className="px-4 py-3"><Badge status={l.status} /></td>
                     <td className="px-4 py-3">
-                      <button onClick={() => returnLoan(l.id)} className="text-xs text-[#0066B3] hover:underline">Devolver</button>
+                      <button onClick={() => returnLoan(l.id)} className="text-xs text-[#004AF7] hover:underline">Devolver</button>
                     </td>
                   </tr>
                 ))}

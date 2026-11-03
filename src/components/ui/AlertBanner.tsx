@@ -52,7 +52,7 @@ export function AlertBanner({
   const role = mode === "assertive" ? "alert" : mode === "polite" ? "status" : undefined;
   return (
     <div
-      className={cn("flex flex-wrap sm:flex-nowrap gap-3 rounded-[12px] border px-4 py-3 text-sm", styles[variant], className)}
+      className={cn("flex flex-wrap sm:flex-nowrap gap-3 rounded-[4px] border px-4 py-3 text-sm", styles[variant], className)}
       role={role}
     >
       <Icon className="w-5 h-5 flex-shrink-0 mt-0.5" aria-hidden />

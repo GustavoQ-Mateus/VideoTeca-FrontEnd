@@ -105,29 +105,29 @@ export function RightsProofPanel({
   return (
     <section
       aria-labelledby={`${inputId}-title`}
-      className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4"
+      className="space-y-4 rounded-[4px] border border-[#E2E8F0] bg-[#F2F5FB] p-4"
     >
       <div>
         <h3 id={`${inputId}-title`} className="font-semibold">
           Comprovantes de autorização
         </h3>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-[#3D4A66]">
           Contrato, licença ou cessão de direitos de “{filmTitle}”. Filmes
           autorizados só podem ser publicados com ao menos um comprovante.
         </p>
       </div>
       {error && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-[#B42318]">
           {error}
         </p>
       )}
-      <p role="status" aria-live="polite" className="text-sm text-emerald-800">
+      <p role="status" aria-live="polite" className="text-sm text-[#067647]">
         {status}
       </p>
       {loading ? (
         <p className="text-sm">Carregando comprovantes…</p>
       ) : proofs.length ? (
-        <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
+        <ul className="divide-y divide-[#E2E8F0] rounded-[4px] border border-[#E2E8F0] bg-white">
           {proofs.map((p) => (
             <li
               key={p.id}
@@ -135,7 +135,7 @@ export function RightsProofPanel({
             >
               <div className="min-w-0">
                 <p className="truncate font-medium">{p.filename}</p>
-                <p className="text-xs text-slate-600">
+                <p className="text-xs text-[#3D4A66]">
                   {formatBytes(p.size)} · enviado em{" "}
                   {new Date(p.uploaded_at).toLocaleString("pt-BR")}
                   {p.uploaded_by_name ? ` por ${p.uploaded_by_name}` : ""}
@@ -182,7 +182,7 @@ export function RightsProofPanel({
             aria-describedby={`${inputId}-help`}
             className="text-sm"
           />
-          <p id={`${inputId}-help`} className="text-xs text-slate-600">
+          <p id={`${inputId}-help`} className="text-xs text-[#3D4A66]">
             PDF, PNG ou JPEG; até 10 MB.
           </p>
         </div>

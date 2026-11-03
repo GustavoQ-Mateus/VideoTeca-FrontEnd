@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { clearSession } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, Film, BookOpen, Calendar, Star, Bell,
   User, Settings, LogOut, BookMarked, Users,
   Building2, ClipboardList, BarChart2, Package, Inbox,
-  Clapperboard, PanelLeftClose, PanelLeftOpen, X,
+  PanelLeftClose, PanelLeftOpen, X,
 } from "lucide-react";
 
 interface NavItem {
@@ -34,7 +35,7 @@ const NAV: Record<string, { section?: string; items: NavItem[] }[]> = {
       items: [
         { label: "Dashboard",       href: "/aluno",              icon: LayoutDashboard },
         { label: "Catálogo",        href: "/aluno/catalogo",     icon: Film },
-        { label: "Minhas Reservas", href: "/aluno/reservas",     icon: BookMarked, badge: 2 },
+        { label: "Minhas Reservas", href: "/aluno/reservas",     icon: BookMarked },
         { label: "Empréstimos",     href: "/aluno/emprestimos",  icon: BookOpen },
       ],
     },
@@ -48,7 +49,7 @@ const NAV: Record<string, { section?: string; items: NavItem[] }[]> = {
     {
       section: "Conta",
       items: [
-        { label: "Notificações",    href: "/aluno/notificacoes", icon: Bell, badge: 3 },
+        { label: "Notificações",    href: "/aluno/notificacoes", icon: Bell },
         { label: "Perfil",          href: "/aluno/perfil",       icon: User },
       ],
     },
@@ -59,7 +60,7 @@ const NAV: Record<string, { section?: string; items: NavItem[] }[]> = {
         { label: "Dashboard",       href: "/professor",                 icon: LayoutDashboard },
         { label: "Solicitar Filme", href: "/professor/solicitar-filme", icon: Film },
         { label: "Solicitar Sala",  href: "/professor/solicitar-sala",  icon: Building2 },
-        { label: "Solicitações",    href: "/professor/solicitacoes",    icon: ClipboardList, badge: 1 },
+        { label: "Solicitações",    href: "/professor/solicitacoes",    icon: ClipboardList },
         { label: "Histórico",       href: "/professor/historico",       icon: BookOpen },
       ],
     },
@@ -83,7 +84,7 @@ const NAV: Record<string, { section?: string; items: NavItem[] }[]> = {
         { label: "Acervo",       href: "/funcionario/acervo",            icon: Package },
         { label: "Empréstimos",  href: "/funcionario/emprestimos",       icon: BookOpen },
         { label: "Devoluções",   href: "/funcionario/devolucoes",        icon: BookMarked },
-        { label: "Reservas",     href: "/funcionario/reservas",          icon: Film, badge: 5 },
+        { label: "Reservas",     href: "/funcionario/reservas",          icon: Film },
       ],
     },
     {
@@ -116,6 +117,7 @@ const FOCUS_RING = "focus-visible:outline-none focus-visible:ring-2 focus-visibl
 
 export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCollapse, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const sections = NAV[role];
 
   function isActive(href: string) {
@@ -126,7 +128,7 @@ export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCol
   }
 
   return (
-    <aside className="w-full h-full min-h-screen lg:min-h-0 bg-brand-navy flex flex-col text-white overflow-hidden">
+    <aside className="w-full h-full min-h-screen lg:min-h-0 bg-brand flex flex-col text-white overflow-hidden">
 
       {/* ── Logo + controles ── */}
       <div
@@ -137,12 +139,9 @@ export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCol
       >
         {!collapsed && (
           <>
-            <div className="w-8 h-8 bg-white/12 rounded-[10px] flex items-center justify-center flex-shrink-0">
-              <Clapperboard className="w-4 h-4 text-white" aria-hidden />
-            </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-white leading-none">Videoteca</p>
-              <p className="text-[11px] text-white/70 mt-0.5 truncate">Unifor · {ROLE_LABELS[role]}</p>
+              <p className="text-base font-bold text-white leading-none">Videoteca <span className="font-semibold">Unifor</span></p>
+              <p className="text-xs text-white/90 mt-1 truncate">{ROLE_LABELS[role]}</p>
             </div>
           </>
         )}
@@ -154,7 +153,7 @@ export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCol
             aria-label={collapsed ? "Expandir menu lateral" : "Recolher menu lateral"}
             title={collapsed ? "Expandir menu" : "Recolher menu"}
             className={cn(
-              "hidden lg:flex w-11 h-11 items-center justify-center rounded-[10px] text-white/80 hover:bg-white/10 hover:text-white flex-shrink-0",
+              "hidden lg:flex w-11 h-11 items-center justify-center rounded-[4px] text-white/80 hover:bg-white/10 hover:text-white flex-shrink-0",
               FOCUS_RING
             )}
           >
@@ -167,7 +166,7 @@ export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCol
             onClick={onClose}
             aria-label="Fechar menu"
             className={cn(
-              "lg:hidden w-11 h-11 flex items-center justify-center rounded-[10px] text-white/80 hover:bg-white/10 hover:text-white flex-shrink-0",
+              "lg:hidden w-11 h-11 flex items-center justify-center rounded-[4px] text-white/80 hover:bg-white/10 hover:text-white flex-shrink-0",
               FOCUS_RING
             )}
           >
@@ -184,7 +183,7 @@ export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCol
               (collapsed ? (
                 <hr className="mx-4 my-2 border-white/15" aria-hidden />
               ) : (
-                <p className="px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-white/60" aria-hidden>
+                <p className="px-5 py-2 text-xs font-semibold text-white/90" aria-hidden>
                   {group.section}
                 </p>
               ))}
@@ -195,7 +194,7 @@ export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCol
                   <li key={item.href} className="relative">
                     {active && (
                       <span
-                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r bg-[#F6C343]"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-[4px] bg-[#F6C343]"
                         aria-hidden
                       />
                     )}
@@ -205,10 +204,10 @@ export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCol
                       aria-current={active ? "page" : undefined}
                       title={collapsed ? item.label : undefined}
                       className={cn(
-                        "relative flex items-center gap-3 mx-2 min-h-11 rounded-[8px] text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
+                        "relative flex items-center gap-3 mx-2 min-h-11 rounded-[4px] text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
                         collapsed ? "justify-center" : "px-3",
                         FOCUS_RING,
-                        active ? "bg-white/15 text-white" : "text-white/75 hover:bg-white/10 hover:text-white"
+                        active ? "bg-white/15 text-white" : "text-white/90 hover:bg-white/10 hover:text-white"
                       )}
                     >
                       <item.icon className={cn("flex-shrink-0", collapsed ? "w-5 h-5" : "w-4 h-4")} aria-hidden />
@@ -249,15 +248,16 @@ export function Sidebar({ role, onNavigate, user, collapsed = false, onToggleCol
               <p className="text-xs font-medium text-white/90 truncate leading-none">
                 {user.name.split(" ").slice(0, 2).join(" ")}
               </p>
-              {user.id && <p className="text-[11px] text-white/70 mt-0.5">{user.id}</p>}
+              {user.id && <p className="text-[11px] text-white/90 mt-0.5">{user.id}</p>}
             </div>
           </div>
         )}
         <Link
-          href="/login"
+          href="/"
+          onClick={(e) => { e.preventDefault(); clearSession(); router.push("/"); }}
           title={collapsed ? "Sair" : undefined}
           className={cn(
-            "flex items-center gap-3 min-h-11 rounded-[8px] text-sm text-white/75 hover:bg-white/10 hover:text-white transition-colors duration-150 motion-reduce:transition-none",
+            "flex items-center gap-3 min-h-11 rounded-[4px] text-sm text-white/75 hover:bg-white/10 hover:text-white transition-colors duration-150 motion-reduce:transition-none",
             collapsed ? "justify-center" : "px-3",
             FOCUS_RING
           )}

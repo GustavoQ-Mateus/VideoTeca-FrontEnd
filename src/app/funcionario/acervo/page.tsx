@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { Film as FilmIcon } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -178,7 +178,7 @@ export default function Page() {
       <div className="space-y-6">
         <div className="flex flex-wrap items-end gap-4">
           <Button onClick={() => startEdit(null)}>Cadastrar filme</Button>
-          <Link className="pb-2 text-blue-700" href="/funcionario/eventos">
+          <Link className="pb-2 text-[#004AF7]" href="/funcionario/eventos">
             Gerenciar sessões
           </Link>
           <div className="w-56">
@@ -198,12 +198,12 @@ export default function Page() {
           </div>
         </div>
         {error && (
-          <p role="alert" className="text-red-700">
+          <p role="alert" className="text-[#B42318]">
             {error}
           </p>
         )}
         {success && (
-          <p role="status" className="text-emerald-800">
+          <p role="status" className="text-[#067647]">
             {success}
           </p>
         )}
@@ -211,7 +211,7 @@ export default function Page() {
           <form
             key={editing?.id ?? "new"}
             onSubmit={submit}
-            className="max-w-3xl space-y-4 rounded-2xl border bg-white p-6"
+            className="max-w-3xl space-y-4 rounded-[4px] border border-[#E2E8F0] bg-white p-6"
           >
             <h2 className="text-lg font-semibold">
               {editing ? "Editar filme" : "Novo filme"}
@@ -270,11 +270,11 @@ export default function Page() {
               maxLength={10000}
               defaultValue={editing?.synopsis ?? ""}
             />
-            <fieldset className="space-y-4 rounded-xl border border-slate-200 p-4">
+            <fieldset className="space-y-4 rounded-[4px] border border-[#E2E8F0] p-4">
               <legend className="px-1 font-semibold">
                 Direitos autorais e autorização de exibição
               </legend>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-[#3D4A66]">
                 Sessões só podem ser publicadas para filmes em domínio público
                 ou autorizados (com titular, validade que cubra a sessão e
                 comprovante anexado).
@@ -385,28 +385,37 @@ export default function Page() {
           {visible.map((f) => (
             <article
               key={f.id}
-              className="flex gap-4 rounded-2xl border bg-white p-4"
+              className="flex gap-4 rounded-[4px] border border-[#E2E8F0] bg-white p-4"
             >
-              {f.cover && (
-                <Image
-                  unoptimized
-                  className="h-32 w-24 rounded-lg object-cover"
+              {f.cover ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className="h-32 w-24 shrink-0 rounded-[4px] object-cover"
                   src={
                     f.cover.startsWith("/api/") ? apiBase() + f.cover : f.cover
                   }
                   alt={`Cartaz de ${f.title}`}
                   width={96}
                   height={128}
+                  loading="lazy"
                 />
+              ) : (
+                <div
+                  className="flex h-32 w-24 shrink-0 items-center justify-center rounded-[4px] bg-[#EBF0FF]"
+                  role="img"
+                  aria-label={`Sem cartaz: ${f.title}`}
+                >
+                  <FilmIcon className="h-6 w-6 text-[#004AF7]" aria-hidden />
+                </div>
               )}
               <div className="min-w-0 space-y-2">
                 <h2 className="font-semibold">{f.title}</h2>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-[#3D4A66]">
                   {f.year} · {f.genre}
                 </p>
                 <RightsBadge status={f.rights_status} />
                 {(f.rights_holder || f.rights_valid_until) && (
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-[#3D4A66]">
                     {[
                       f.rights_holder,
                       f.license_type && licenseLabel(f.license_type),

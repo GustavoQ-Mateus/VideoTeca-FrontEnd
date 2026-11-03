@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Film } from "lucide-react";
+import { TMDB_NOTICE, Wordmark } from "@/components/catalog/Brand";
 import { fetchFilmById } from "@/lib/api";
 import { FilmDetailView } from "@/components/catalog/FilmDetailView";
 import { Button } from "@/components/ui/Button";
@@ -13,14 +13,11 @@ export default async function PublicFilmDetail({ params }: { params: Promise<{ i
   if (!film) notFound();
 
   return (
-    <div className="min-h-screen bg-[#F5F7FA]">
+    <div className="min-h-screen bg-white">
       <header className="bg-white border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-[#0066B3] rounded-[8px] flex items-center justify-center">
-              <Film className="w-3.5 h-3.5 text-white" aria-hidden />
-            </div>
-            <span className="text-sm font-bold text-[#003A70]">Videoteca Unifor</span>
+          <Link href="/" aria-label="Videoteca Unifor — início">
+            <Wordmark />
           </Link>
           <div className="ml-auto flex gap-2">
             <Link href="/catalogo">
@@ -43,6 +40,7 @@ export default async function PublicFilmDetail({ params }: { params: Promise<{ i
             { label: film.title },
           ]}
         />
+        <p className="mt-6 text-xs text-[#667085]">{TMDB_NOTICE}</p>
       </div>
     </div>
   );

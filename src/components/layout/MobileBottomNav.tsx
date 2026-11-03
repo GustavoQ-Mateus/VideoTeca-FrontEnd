@@ -61,7 +61,7 @@ export function MobileBottomNav({ role }: { role: "aluno" | "professor" | "funci
                 aria-current={active ? "page" : undefined}
                 aria-label={full}
                 className={cn(
-                  "relative flex flex-col items-center justify-center gap-1 h-16 px-1 rounded-[10px] transition-colors duration-150 motion-reduce:transition-none",
+                  "relative flex flex-col items-center justify-center gap-1 h-16 px-1 rounded-[4px] transition-colors duration-150 motion-reduce:transition-none",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand",
                   active ? "text-brand" : "text-fg-subtle hover:text-fg"
                 )}

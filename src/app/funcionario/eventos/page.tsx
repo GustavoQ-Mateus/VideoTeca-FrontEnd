@@ -115,12 +115,12 @@ export default function Page() {
           Criar sessão
         </Button>
         {error && (
-          <p role="alert" className="text-red-700">
+          <p role="alert" className="text-[#B42318]">
             {error}
           </p>
         )}
         {success && (
-          <p role="status" className="text-emerald-800">
+          <p role="status" className="text-[#067647]">
             {success}
           </p>
         )}
@@ -128,7 +128,7 @@ export default function Page() {
           <form
             key={editing?.id ?? "new"}
             onSubmit={submit}
-            className="max-w-3xl space-y-4 rounded-2xl border bg-white p-6"
+            className="max-w-3xl space-y-4 rounded-[4px] border border-[#E2E8F0] bg-white p-6"
           >
             <Input
               name="title"
@@ -214,7 +214,7 @@ export default function Page() {
         {sessions.map((s) => (
           <article
             key={s.id}
-            className="space-y-3 rounded-2xl border bg-white p-5"
+            className="space-y-3 rounded-[4px] border border-[#E2E8F0] bg-white p-5"
           >
             <h2 className="text-lg font-semibold">{s.title}</h2>
             <p>

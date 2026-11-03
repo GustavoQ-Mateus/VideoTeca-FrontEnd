@@ -19,10 +19,10 @@ export const LICENSE_TYPE_OPTIONS = [
 ];
 
 export const RIGHTS_STATUS_STYLE: Record<RightsStatus, string> = {
-  pending: "bg-amber-100 text-amber-900",
-  authorized: "bg-emerald-100 text-emerald-800",
-  denied: "bg-red-100 text-red-800",
-  public_domain: "bg-sky-100 text-sky-800",
+  pending: "text-warning",
+  authorized: "text-success",
+  denied: "text-danger",
+  public_domain: "text-brand",
 };
 
 export const rightsLabel = (status?: string | null) =>

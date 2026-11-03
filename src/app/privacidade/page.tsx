@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Film } from "lucide-react";
+import { Wordmark } from "@/components/catalog/Brand";
 
 // Keep in sync with POLICY_VERSION in the API (app/routers/privacy.py).
 const POLICY_VERSION = "2026-10";
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 /** Text the institution must fill in before going to production. */
 function Pending({ children }: { children: React.ReactNode }) {
   return (
-    <mark className="rounded bg-amber-100 px-1 text-amber-900">
+    <mark className="rounded-[4px] bg-[#FFFAEB] px-1 text-[#93370D]">
       [A PREENCHER PELA UNIFOR: {children}]
     </mark>
   );
@@ -58,26 +58,21 @@ export default function PrivacidadePage() {
     <div className="min-h-screen bg-white">
       <header className="border-b border-[#E2E8F0] bg-white">
         <div className="mx-auto flex h-16 max-w-5xl items-center gap-6 px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#0066B3]">
-              <Film className="h-4 w-4 text-white" aria-hidden />
-            </div>
-            <span className="text-sm font-bold text-[#003A70]">
-              Videoteca Unifor
-            </span>
+          <Link href="/" aria-label="Videoteca Unifor — início">
+            <Wordmark />
           </Link>
           <nav aria-label="Navegação" className="ml-auto flex gap-4 text-sm">
-            <Link href="/catalogo" className="text-[#667085] hover:text-[#172033]">
+            <Link href="/catalogo" className="text-[#667085] hover:text-[#0B1B3F]">
               Catálogo
             </Link>
-            <Link href="/login" className="font-medium text-[#0066B3]">
+            <Link href="/login" className="font-medium text-[#004AF7]">
               Entrar
             </Link>
           </nav>
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl space-y-10 px-6 py-12 leading-relaxed text-[#172033]">
+      <main className="mx-auto max-w-3xl space-y-10 px-6 py-12 leading-relaxed text-[#0B1B3F]">
         <div>
           <h1 className="text-3xl font-bold">Política de Privacidade</h1>
           <p className="mt-2 text-sm text-[#667085]">
@@ -102,7 +97,7 @@ export default function PrivacidadePage() {
                 Categorias de dados pessoais, finalidade e base legal
               </caption>
               <thead>
-                <tr className="border-b border-[#E2E8F0] bg-[#F5F7FA]">
+                <tr className="border-b border-[#E2E8F0] bg-[#F2F5FB]">
                   <th scope="col" className="p-3">Categoria</th>
                   <th scope="col" className="p-3">Dados</th>
                   <th scope="col" className="p-3">Finalidade</th>

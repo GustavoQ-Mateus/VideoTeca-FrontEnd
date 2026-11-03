@@ -6,14 +6,14 @@ import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { staff as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
 import {
   Package, BookOpen, BookMarked, AlertTriangle,
   Building2, Calendar, Users, Clock, Film, ChevronRight,
 } from "lucide-react";
 
 export default function AdminDashboard() {
-  const user = getUser();
+  const user = useAuthUser();
   const [stats,    setStats]    = useState<any>(null);
   const [loans,    setLoans]    = useState<any[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
@@ -28,11 +28,11 @@ export default function AdminDashboard() {
     <AppShell role="funcionario" title="Dashboard Administrativo" user={{ name: user?.name ?? "", course: "Funcionário" }}>
 
       {stats?.late_items > 0 && (
-        <div className="bg-[#E7472E]/10 border border-[#E7472E]/30 rounded-[14px] p-4 mb-6 flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5 text-[#E7472E] flex-shrink-0" aria-hidden />
+        <div className="bg-[#FEF3F2] border border-[#FECDCA] rounded-[4px] p-4 mb-6 flex items-center gap-3">
+          <AlertTriangle className="w-5 h-5 text-[#B42318] flex-shrink-0" aria-hidden />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-[#E7472E]">Atenção: {stats.late_items} itens com devolução atrasada</p>
-            <p className="text-xs text-[#E7472E]/70 mt-0.5">Verifique os empréstimos vencidos e entre em contato com os usuários.</p>
+            <p className="text-sm font-semibold text-[#B42318]">Atenção: {stats.late_items} itens com devolução atrasada</p>
+            <p className="text-xs text-[#B42318] mt-0.5">Verifique os empréstimos vencidos e entre em contato com os usuários.</p>
           </div>
           <Link href="/funcionario/emprestimos">
             <Button size="sm" variant="danger" className="flex-shrink-0 text-xs">Ver atrasos</Button>
@@ -42,10 +42,10 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <StatCard label="Total do Acervo"       value={(stats?.total_films ?? 0).toLocaleString()} icon={Package}    accent="blue" />
-        <StatCard label="Empréstimos Ativos"    value={stats?.active_loans          ?? 0}           icon={BookOpen}   accent="green" />
-        <StatCard label="Reservas Pendentes"    value={stats?.pending_reservations  ?? 0}           icon={BookMarked} accent="yellow" />
+        <StatCard label="Empréstimos Ativos"    value={stats?.active_loans          ?? 0}           icon={BookOpen}   accent="blue" />
+        <StatCard label="Reservas Pendentes"    value={stats?.pending_reservations  ?? 0}           icon={BookMarked} accent="blue" />
         <StatCard label="Itens em Atraso"       value={stats?.late_items            ?? 0}           icon={AlertTriangle} accent="red" />
-        <StatCard label="Solicitações Pendentes" value={stats?.pending_requests     ?? 0}           icon={Users}      accent="purple" />
+        <StatCard label="Solicitações Pendentes" value={stats?.pending_requests     ?? 0}           icon={Users}      accent="blue" />
         <StatCard label="Próximos Eventos"      value={stats?.upcoming_events       ?? 0}           icon={Calendar}   accent="blue" />
       </div>
 
@@ -54,16 +54,16 @@ export default function AdminDashboard() {
 
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-[#172033]">Últimos Empréstimos</h3>
-              <Link href="/funcionario/emprestimos" className="text-xs text-[#0066B3] hover:underline flex items-center gap-1">
+              <h3 className="font-semibold text-[#0B1B3F]">Últimos Empréstimos</h3>
+              <Link href="/funcionario/emprestimos" className="text-xs text-[#004AF7] hover:underline flex items-center gap-1">
                 Ver todos <ChevronRight className="w-3.5 h-3.5" aria-hidden />
               </Link>
             </div>
-            <div className="bg-white rounded-[14px] border border-[#E2E8F0] overflow-hidden">
+            <div className="bg-white rounded-[4px] border border-[#E2E8F0] overflow-hidden">
               {loans.map(l => (
                 <div key={l.id} className="list-row">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[#172033] text-sm">{l.film}</p>
+                    <p className="font-medium text-[#0B1B3F] text-sm">{l.film}</p>
                     <p className="text-xs text-[#667085] flex items-center gap-1 mt-0.5">
                       <Clock className="w-3 h-3" aria-hidden />{l.user_name} · {l.registration}
                     </p>
@@ -79,16 +79,16 @@ export default function AdminDashboard() {
 
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-[#172033]">Solicitações de Professores</h3>
-              <Link href="/funcionario/solicitacoes" className="text-xs text-[#0066B3] hover:underline flex items-center gap-1">
+              <h3 className="font-semibold text-[#0B1B3F]">Solicitações de Professores</h3>
+              <Link href="/funcionario/solicitacoes" className="text-xs text-[#004AF7] hover:underline flex items-center gap-1">
                 Ver todas <ChevronRight className="w-3.5 h-3.5" aria-hidden />
               </Link>
             </div>
-            <div className="bg-white rounded-[14px] border border-[#E2E8F0] overflow-hidden">
+            <div className="bg-white rounded-[4px] border border-[#E2E8F0] overflow-hidden">
               {requests.map(r => (
                 <div key={r.id} className="list-row">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[#172033] text-sm">{r.professor_name}</p>
+                    <p className="font-medium text-[#0B1B3F] text-sm">{r.professor_name}</p>
                     <p className="text-xs text-[#667085] mt-0.5">
                       {r.request_type === "film" ? "Filme" : "Sala"} — {r.payload?.film_title ?? r.payload?.room_name ?? ""}
                     </p>
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
         </div>
 
         <aside className="split-panel px-4 sm:px-6 py-6 space-y-4" aria-label="Acesso rápido">
-          <p className="section-label">Acesso rápido</p>
+          <h3 className="font-semibold text-[#0B1B3F]">Acesso rápido</h3>
           {[
             { icon: BookOpen,   label: "Registrar Empréstimo", href: "/funcionario/emprestimos" },
             { icon: BookMarked, label: "Reservas",             href: "/funcionario/reservas" },
@@ -114,9 +114,9 @@ export default function AdminDashboard() {
             { icon: Building2,  label: "Salas",                href: "/funcionario/salas" },
           ].map(({ icon: Icon, label, href }) => (
             <Link key={href} href={href}
-              className="flex items-center gap-3 px-3 py-3 rounded-[10px] border border-[#E2E8F0] bg-white hover:border-[#0066B3]/40 transition-colors group">
-              <Icon className="w-4 h-4 text-[#667085] group-hover:text-[#0066B3] transition-colors" aria-hidden />
-              <span className="text-sm text-[#172033]">{label}</span>
+              className="flex items-center gap-3 px-3 py-3 rounded-[4px] border border-[#E2E8F0] bg-white hover:border-[#004AF7]/40 transition-colors group">
+              <Icon className="w-4 h-4 text-[#667085] group-hover:text-[#004AF7] transition-colors" aria-hidden />
+              <span className="text-sm text-[#0B1B3F]">{label}</span>
               <ChevronRight className="w-3.5 h-3.5 ml-auto text-[#98A2B3]" aria-hidden />
             </Link>
           ))}

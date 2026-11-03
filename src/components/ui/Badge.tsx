@@ -13,33 +13,28 @@ interface BadgeProps {
   size?: "sm" | "md";
 }
 
-// Pares texto/fundo com contraste ≥ 4.5:1.
+// Status como texto na cor semântica, sem pílula nem fundo (regras do usuário).
 const TONES: Record<BadgeTone, string> = {
-  neutral: "bg-slate-100 text-slate-700",
-  brand:   "bg-brand-subtle text-brand",
-  success: "bg-success-subtle text-success",
-  warning: "bg-warning-subtle text-warning",
-  danger:  "bg-danger-subtle text-danger",
-  info:    "bg-info-subtle text-info",
+  neutral: "text-fg-muted",
+  brand:   "text-brand",
+  success: "text-success",
+  warning: "text-warning",
+  danger:  "text-danger",
+  info:    "text-info",
 };
+
+// STATUS_COLORS traz pares fundo/texto; aqui só a cor do texto é usada.
+const textOnly = (classes: string) => classes.split(/\s+/).filter((c) => c.startsWith("text-")).join(" ");
 
 export function Badge({ status, label, className, tone, size = "md" }: BadgeProps) {
   const colorClass = status
-    ? STATUS_COLORS[status] ?? TONES.neutral
+    ? textOnly(STATUS_COLORS[status] ?? "") || TONES.neutral
     : tone
       ? TONES[tone]
-      : "";
+      : TONES.neutral;
   const text = label ?? (status ? STATUS_LABELS[status] ?? status : "");
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-pill font-medium whitespace-nowrap",
-        size === "sm" ? "px-2 py-0.5 text-[11px]" : "px-2.5 py-0.5 text-xs",
-        colorClass,
-        className
-      )}
-    >
-      {status ? <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" aria-hidden /> : null}
+    <span className={cn("inline-flex items-center font-medium whitespace-nowrap", size === "sm" ? "text-xs" : "text-sm", colorClass, className)}>
       {text}
     </span>
   );

@@ -54,7 +54,7 @@ export function Tabs({ tabs, value, onChange, className, ariaLabel, idPrefix, wi
       role="tablist"
       aria-label={ariaLabel}
       onKeyDown={onKeyDown}
-      className={cn("flex gap-1 p-1 bg-canvas rounded-[12px] w-fit max-w-full flex-wrap", className)}
+      className={cn("flex gap-6 border-b border-line max-w-full flex-wrap", className)}
     >
       {tabs.map((t, i) => {
         const selected = value === t.id;
@@ -73,9 +73,9 @@ export function Tabs({ tabs, value, onChange, className, ariaLabel, idPrefix, wi
             disabled={t.disabled}
             onClick={() => onChange(t.id)}
             className={cn(
-              "min-h-10 px-4 py-2 rounded-control text-sm font-medium transition-colors duration-200 motion-reduce:transition-none",
+              "min-h-11 -mb-px border-b-2 px-0.5 py-2 text-sm font-medium transition-colors duration-150 motion-reduce:transition-none",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50 disabled:cursor-not-allowed",
-              selected ? "bg-surface text-brand shadow-sm" : "text-fg-subtle hover:text-fg"
+              selected ? "border-brand text-brand" : "border-transparent text-fg-muted hover:text-fg"
             )}
           >
             {t.label}

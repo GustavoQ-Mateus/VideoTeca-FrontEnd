@@ -50,7 +50,7 @@ function ToastCard({ t, onDismiss }: { t: ToastItem; onDismiss: (id: string) => 
   return (
     <div
       className={cn(
-        "pointer-events-auto motion-fade rounded-panel border px-4 py-3 shadow-lg flex gap-3 items-start",
+        "pointer-events-auto motion-fade rounded-panel border px-4 py-3 flex gap-3 items-start",
         s.box
       )}
     >

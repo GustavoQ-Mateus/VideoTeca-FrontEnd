@@ -17,7 +17,7 @@ export default function ProfessorPerfilPage() {
       <div className="max-w-xl space-y-6">
         <div
           key={user?.id ?? "anon"}
-          className="bg-white rounded-[18px] border border-[#E2E8F0] p-6 space-y-4"
+          className="bg-white rounded-[4px] border border-[#E2E8F0] p-6 space-y-4"
         >
           <Input label="Nome" defaultValue={user?.name ?? ""} />
           <Input

@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Search } from "lucide-react";
 import { staff as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
 
 const ROLE_LABEL: Record<string, string> = { aluno: "Aluno", professor: "Professor", funcionario: "Funcionário", admin: "Admin" };
 
 export default function UsuariosPage() {
-  const user = getUser();
+  const user = useAuthUser();
   const [users, setUsers]   = useState<any[]>([]);
   const [query, setQuery]   = useState("");
 
@@ -29,13 +29,13 @@ export default function UsuariosPage() {
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Buscar por nome, matrícula ou email…"
-          className="w-full h-10 pl-9 pr-4 border border-[#E2E8F0] rounded-[10px] text-sm bg-white focus:outline-none focus:border-[#0066B3]"
+          className="w-full h-10 pl-9 pr-4 border border-[#E2E8F0] rounded-[4px] text-sm bg-white focus:outline-none focus:border-[#004AF7]"
         />
       </div>
 
-      <div className="bg-white rounded-[18px] border border-[#E2E8F0] overflow-hidden">
+      <div className="bg-white rounded-[4px] border border-[#E2E8F0] overflow-hidden">
         <table className="w-full min-w-[600px] text-sm">
-          <thead className="bg-[#F5F7FA] border-b border-[#E2E8F0]">
+          <thead className="bg-[#F2F5FB] border-b border-[#E2E8F0]">
             <tr>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Nome</th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#667085]">Matrícula</th>
@@ -46,8 +46,8 @@ export default function UsuariosPage() {
           </thead>
           <tbody className="divide-y divide-[#E2E8F0]">
             {filtered.map(u => (
-              <tr key={u.id} className="hover:bg-[#F5F7FA]">
-                <td className="px-4 py-3 font-medium text-[#172033]">{u.full_name}</td>
+              <tr key={u.id} className="hover:bg-[#F2F5FB]">
+                <td className="px-4 py-3 font-medium text-[#0B1B3F]">{u.full_name}</td>
                 <td className="px-4 py-3 text-[#667085]">{u.registration ?? "—"}</td>
                 <td className="px-4 py-3 text-[#667085]">{ROLE_LABEL[u.role] ?? u.role}</td>
                 <td className="px-4 py-3 text-[#667085]">{u.course ?? "—"}</td>

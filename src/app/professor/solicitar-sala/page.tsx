@@ -84,7 +84,7 @@ export default function Page() {
         {success && (
           <p
             role="status"
-            className="rounded-xl bg-emerald-50 p-4 text-emerald-800"
+            className="rounded-[4px] border border-[#ABEFC6] bg-[#ECFDF3] p-4 text-sm text-[#067647]"
           >
             {success}
           </p>
@@ -93,10 +93,10 @@ export default function Page() {
           <form
             ref={form}
             onSubmit={submit}
-            className="space-y-4 rounded-[18px] border border-slate-200 bg-white p-6"
+            className="space-y-4 rounded-[4px] border border-[#E2E8F0] bg-white p-6"
             aria-busy={loading}
           >
-            <h2 className="text-lg font-semibold">{room.name}</h2>
+            <h2 className="text-lg font-semibold text-[#0B1B3F]">{room.name}</h2>
             <Input
               name="title"
               label="Título / finalidade"
@@ -146,7 +146,7 @@ export default function Page() {
             </div>
             <Textarea name="notes" label="Observações" maxLength={2000} />
             {error && (
-              <p role="alert" className="text-red-700">
+              <p role="alert" className="text-sm text-[#B42318]">
                 {error}
               </p>
             )}

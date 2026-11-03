@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Film, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { Wordmark } from "@/components/catalog/Brand";
 import { Button } from "@/components/ui/Button";
 import { publishedEvents } from "@/lib/public-events";
 
@@ -15,23 +16,18 @@ const NAV_LINKS = [
 export default async function PublicEventsPage() {
   const EVENTS = await publishedEvents();
   return (
-    <div className="min-h-screen bg-[#F5F7FA]">
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[#E2E8F0]">
+    <div className="min-h-screen bg-white">
+      <header className="sticky top-0 z-50 bg-white border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#0066B3] rounded-[10px] flex items-center justify-center">
-              <Film className="w-4 h-4 text-white" aria-hidden />
-            </div>
-            <span className="text-sm font-bold text-[#003A70]">
-              Videoteca Unifor
-            </span>
+          <Link href="/" aria-label="Videoteca Unifor — início">
+            <Wordmark />
           </Link>
           <nav className="hidden md:flex gap-1 flex-1" aria-label="Navegação">
             {NAV_LINKS.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
-                className="px-3 py-2 text-sm text-[#667085] hover:text-[#172033] rounded-[8px] hover:bg-[#F5F7FA] font-medium"
+                className="px-3 py-2 text-sm text-[#667085] hover:text-[#0B1B3F] rounded-[4px] hover:bg-[#F2F5FB] font-medium"
               >
                 {l.label}
               </Link>
@@ -43,15 +39,12 @@ export default async function PublicEventsPage() {
         </div>
       </header>
 
-      <section className="bg-gradient-to-br from-violet-600 via-[#0066B3] to-[#003A70] py-16 px-6">
+      <section className="bg-[#004AF7] py-16 px-6">
         <div className="max-w-7xl mx-auto">
-          <p className="text-white/70 text-sm font-medium uppercase tracking-wider mb-2">
-            Programação cultural
-          </p>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
             Eventos e cineclubes
           </h1>
-          <p className="text-white/75 max-w-xl">
+          <p className="text-white/80 max-w-xl">
             Mostras, sessões comentadas e debates com identidade acadêmica
             Unifor.
           </p>
@@ -60,7 +53,7 @@ export default async function PublicEventsPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {!EVENTS.length && <p>Nenhuma sessão publicada no momento.</p>}
+          {!EVENTS.length && <p className="text-sm text-[#667085]">Nenhuma sessão publicada no momento.</p>}
           {EVENTS.map((e) => (
             <EventCard key={e.id} {...e} href={`/eventos/${e.id}`} />
           ))}
@@ -68,7 +61,7 @@ export default async function PublicEventsPage() {
         <div className="mt-10 text-center">
           <Link
             href="/catalogo"
-            className="inline-flex items-center gap-1 text-[#0066B3] font-medium hover:underline"
+            className="inline-flex items-center gap-1 text-[#004AF7] font-medium hover:underline"
           >
             Explorar catálogo <ChevronRight className="w-4 h-4" aria-hidden />
           </Link>

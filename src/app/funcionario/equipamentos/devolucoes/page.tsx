@@ -74,22 +74,22 @@ export default function Page() {
       user={{ name: user?.name ?? "", course: "Funcionário" }}
     >
       <div className="max-w-3xl space-y-5">
-        <Link className="text-blue-700" href="/funcionario/equipamentos">
+        <Link className="text-[#004AF7]" href="/funcionario/equipamentos">
           Voltar aos equipamentos
         </Link>
         {error && (
-          <p role="alert" className="text-red-700">
+          <p role="alert" className="text-[#B42318]">
             {error}
           </p>
         )}
         {success && (
-          <p role="status" className="text-emerald-800">
+          <p role="status" className="text-[#067647]">
             {success}
           </p>
         )}
         <div className="space-y-3">
           {loans.map((l) => (
-            <article key={l.id} className="rounded-xl border bg-white p-4">
+            <article key={l.id} className="rounded-[4px] border border-[#E2E8F0] bg-white p-4">
               <h2 className="font-semibold">
                 {l.name} · {l.quantity} unidade(s)
               </h2>
@@ -97,7 +97,7 @@ export default function Page() {
                 {l.full_name} · prazo{" "}
                 {new Date(l.due_at).toLocaleString("pt-BR")}
               </p>
-              {l.late && <p className="text-red-700">Em atraso</p>}
+              {l.late && <p className="text-[#B42318]">Em atraso</p>}
               <Button
                 type="button"
                 variant="outline"
@@ -115,7 +115,7 @@ export default function Page() {
         {selected && (
           <form
             onSubmit={submit}
-            className="space-y-4 rounded-2xl border bg-white p-6"
+            className="space-y-4 rounded-[4px] border border-[#E2E8F0] bg-white p-6"
           >
             <h2 className="font-semibold">
               Devolução #{selected.id}: {selected.name}

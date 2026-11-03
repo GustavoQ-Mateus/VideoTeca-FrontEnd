@@ -114,15 +114,15 @@ export function PrivacyPanel() {
   return (
     <section
       aria-labelledby={`${uid}-title`}
-      className="space-y-5 rounded-[18px] border border-[#E2E8F0] bg-white p-6"
+      className="space-y-5 rounded-[4px] border border-[#E2E8F0] bg-white p-6"
     >
       <div>
-        <h2 id={`${uid}-title`} className="font-semibold text-[#172033]">
+        <h2 id={`${uid}-title`} className="font-semibold text-[#0B1B3F]">
           Privacidade e dados pessoais
         </h2>
         <p className="mt-1 text-sm text-[#667085]">
           Seus direitos conforme a LGPD. Leia a{" "}
-          <Link href="/privacidade" className="text-[#0066B3] underline">
+          <Link href="/privacidade" className="text-[#004AF7] underline">
             Política de Privacidade
           </Link>
           .
@@ -132,7 +132,7 @@ export function PrivacyPanel() {
       {error && (
         <p
           role="alert"
-          className="rounded-[10px] border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+          className="rounded-[4px] border border-red-200 bg-red-50 p-3 text-sm text-red-800"
         >
           {error}
         </p>
@@ -211,7 +211,7 @@ export function PrivacyPanel() {
         ) : (
           <form
             onSubmit={requestDeletion}
-            className="space-y-3 rounded-[12px] border border-red-200 bg-red-50 p-4"
+            className="space-y-3 rounded-[4px] border border-red-200 bg-red-50 p-4"
           >
             <label htmlFor={`${uid}-confirm`} className="block text-sm">
               Esta ação não pode ser desfeita. Digite{" "}
@@ -222,7 +222,7 @@ export function PrivacyPanel() {
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
               autoComplete="off"
-              className="h-10 w-full max-w-xs rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm"
+              className="h-10 w-full max-w-xs rounded-[4px] border border-[#E2E8F0] bg-white px-3 text-sm"
             />
             <div className="flex gap-2">
               <Button

@@ -9,10 +9,10 @@
 /* ── Design Tokens (fonte da verdade) ──────────────────── */
 :root {
   /* Brand */
-  --unifor-navy:        #003A70;
-  --unifor-blue:        #0066B3; /* 5.9:1 sobre branco */
-  --unifor-blue-hover:  #005599;
-  --unifor-blue-light:  #E8F2FC;
+  --unifor-navy:        #0B1B3F;
+  --unifor-blue:        #004AF7; /* azul UNIFOR (amostrado da referência do usuário), 5.9:1 sobre branco */
+  --unifor-blue-hover:  #003BC6;
+  --unifor-blue-light:  #EBF0FF;
   --unifor-red:         #E7472E; /* decorativo/ícones; para texto use --danger */
   --unifor-yellow:      #F6C343; /* nunca como cor de texto sobre fundo claro */
   --unifor-green:       #2EAD68; /* decorativo; para texto use --success */
@@ -26,20 +26,20 @@
   --success-subtle: #ECFDF3;
   --warning:        #93370D; /* 7.5:1 */
   --warning-subtle: #FFFAEB;
-  --info:           #0066B3;
-  --info-subtle:    #E8F2FC;
+  --info:           #004AF7;
+  --info-subtle:    #EBF0FF;
 
   /* Surface */
-  --bg:            #F5F7FA;
+  --bg:            #FFFFFF; /* branco puro (regra do usuário) */
   --bg-card:       #FFFFFF;
-  --bg-subtle:     #FAFBFC;
-  --border:        #E2E8F0; /* divisores (decorativo) */
+  --bg-subtle:     #F2F5FB; /* degrau de tom no lugar de linhas/sombras */
+  --border:        #E3E8F2; /* divisores (decorativo) */
   --border-strong: #C4CDD8;
   --border-input:  #8A94A6; /* borda de controle de formulário, ≥3:1 (WCAG 1.4.11) */
 
   /* Text — todos ≥ 4.5:1 sobre --bg-card e --bg */
-  --text-primary:   #172033; /* 16.4:1 */
-  --text-secondary: #475467; /* 7.7:1 */
+  --text-primary:   #0B1B3F; /* 16.9:1 */
+  --text-secondary: #3D4A66; /* 9.1:1 */
   --text-tertiary:  #667085; /* 4.97:1 (antes #98A2B3 = 2.6:1, reprovado em AA) */
   --text-disabled:  #98A2B3; /* apenas estados desabilitados/decorativos */
   --text-on-dark:   #FFFFFF;
@@ -51,35 +51,37 @@
 
   /* Status (pontos/fundos; o Badge usa pares texto/fundo AA) */
   --status-available:   #2EAD68;
-  --status-reserved:    #0066B3;
+  --status-reserved:    #004AF7;
   --status-borrowed:    #F6C343;
   --status-late:        #E7472E;
   --status-returned:    #667085;
   --status-cancelled:   #667085;
   --status-expired:     #667085;
-  --status-analysis:    #9B51E0;
+  --status-analysis:    #004AF7; /* sem violeta: análise usa o azul */
   --status-approved:    #2EAD68;
   --status-refused:     #E7472E;
   --status-damaged:     #F6C343;
   --status-maintenance: #344054;
 
   /* Radius */
-  --r-xs:   6px;
-  --r-sm:   10px;
-  --r-md:   14px;
-  --r-lg:   18px;
-  --r-xl:   24px;
+  /* Regra do usuário: cantos de 4px em tudo (exceto círculos) */
+  --r-xs:   4px;
+  --r-sm:   4px;
+  --r-md:   4px;
+  --r-lg:   4px;
+  --r-xl:   4px;
   --r-full: 9999px;
 
-  /* Shadows */
-  --shadow-xs:  0 1px 2px rgba(23,32,51,0.06);
-  --shadow-sm:  0 1px 3px rgba(23,32,51,0.08), 0 1px 2px rgba(23,32,51,0.04);
-  --shadow-md:  0 4px 12px rgba(23,32,51,0.10), 0 2px 4px rgba(23,32,51,0.06);
-  --shadow-lg:  0 12px 32px rgba(23,32,51,0.12), 0 4px 8px rgba(23,32,51,0.06);
-  --shadow-blue:0 4px 20px rgba(0,102,179,0.18), 0 2px 8px rgba(0,102,179,0.10);
+  /* Sem sombras e sem blur (regra do usuário): superfícies se separam por degrau de tom */
+  --shadow-xs:  none;
+  --shadow-sm:  none;
+  --shadow-md:  none;
+  --shadow-lg:  none;
+  --shadow-blue:none;
 
   /* Motion */
-  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out:  cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-in:   cubic-bezier(0.4, 0, 1, 1);
   --ease-io:   cubic-bezier(0.4, 0, 0.2, 1);
   --dur-fast:  150ms;
@@ -285,7 +287,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Skeleton ──────────────────────────────────────────── */
 .skeleton {
-  background: linear-gradient(90deg, var(--border) 25%, #f0f4f8 50%, var(--border) 75%);
+  background: linear-gradient(90deg, var(--bg-subtle) 25%, #E3E8F2 50%, var(--bg-subtle) 75%); /* único gradiente: brilho do skeleton de carregamento */
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   border-radius: var(--r-sm);
@@ -320,6 +322,17 @@ h1, h2, h3, h4, h5, h6 {
   border-left: 1px solid var(--border);
   background: #FFFFFF;
   overflow-y: auto;
+}
+
+/* Desktop: o painel acompanha a tela (ações sempre visíveis, sem rolar até o fim da lista). */
+@media (min-width: 1024px) {
+  .split-panel {
+    position: sticky;
+    top: var(--topbar-h);
+    align-self: start;
+    height: calc(100vh - var(--topbar-h));
+    max-height: calc(100vh - var(--topbar-h));
+  }
 }
 
 @media (max-width: 1023px) {
@@ -377,16 +390,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Glassmorphism ─────────────────────────────────────── */
 .glass {
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(255,255,255,0.12); /* sem blur (regra do usuário) */
   border: 1px solid rgba(255,255,255,0.20);
 }
 
 .glass-dark {
-  background: rgba(16,24,40,0.60);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  background: #0B1B3F; /* sem blur: superfície escura chapada */
   border: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -443,11 +452,9 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Section divider ───────────────────────────────────── */
 .section-label {
   font-family: var(--font-inter), 'Inter', sans-serif;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
 /* ── Movimento reduzido ────────────────────────────────── */

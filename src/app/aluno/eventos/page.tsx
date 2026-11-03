@@ -2,24 +2,22 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { EventCard } from "@/components/ui/EventCard";
-import { Drawer } from "@/components/ui/Drawer";
 import { Select } from "@/components/ui/Select";
-import { Button } from "@/components/ui/Button";
 import { student as api } from "@/lib/api";
-import { getUser } from "@/lib/auth";
+import { useAuthUser } from "@/lib/use-auth-user";
+import { eventTypeLabel } from "../_components/eventType";
 
 export default function AlunoEventosPage() {
-  const user = getUser();
+  const user = useAuthUser();
   const [events, setEvents] = useState<any[]>([]);
   const [filter, setFilter] = useState("todos");
-  const [drawer, setDrawer] = useState(false);
 
   useEffect(() => {
     api.events().then((d) => d && setEvents(d));
   }, []);
 
   const filtered = events.filter(
-    (e) => filter === "todos" || e.event_type === filter,
+    (e) => filter === "todos" || eventTypeLabel(e.event_type) === filter,
   );
 
   async function toggleEnroll(eventId: number, enrolled: boolean) {
@@ -43,14 +41,7 @@ export default function AlunoEventosPage() {
             Destaques da semana e inscrições abertas.
           </p>
         </div>
-        <Button
-          variant="outline"
-          className="sm:hidden"
-          onClick={() => setDrawer(true)}
-        >
-          Filtros
-        </Button>
-        <div className="hidden sm:block w-48">
+        <div className="w-full sm:w-48">
           <Select
             aria-label="Tipo de evento"
             value={filter}
@@ -61,6 +52,8 @@ export default function AlunoEventosPage() {
             <option value="Mostra">Mostra</option>
             <option value="Sessão">Sessão</option>
             <option value="Debate">Debate</option>
+            <option value="Exibição">Exibição</option>
+            <option value="Oficina">Oficina</option>
           </Select>
         </div>
       </div>
@@ -71,7 +64,7 @@ export default function AlunoEventosPage() {
             key={e.id}
             id={e.id}
             title={e.title}
-            type={e.event_type ?? ""}
+            type={eventTypeLabel(e.event_type)}
             date={e.starts_at ?? ""}
             location={e.location ?? ""}
             slots={e.slots}
@@ -95,22 +88,6 @@ export default function AlunoEventosPage() {
         )}
       </div>
 
-      <Drawer open={drawer} onClose={() => setDrawer(false)} title="Filtros">
-        <Select
-          label="Tipo"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="todos">Todos</option>
-          <option value="Cineclube">Cineclube</option>
-          <option value="Mostra">Mostra</option>
-          <option value="Sessão">Sessão</option>
-          <option value="Debate">Debate</option>
-        </Select>
-        <Button className="w-full mt-4" onClick={() => setDrawer(false)}>
-          Aplicar
-        </Button>
-      </Drawer>
     </AppShell>
   );
 }

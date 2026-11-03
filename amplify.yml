@@ -1,0 +1,40 @@
+# AWS Amplify Hosting — build do front (Next.js SSR, plataforma WEB_COMPUTE).
+# Guia completo: docs/DEPLOY.md
+#
+# Variáveis de ambiente (Amplify → App settings → Environment variables),
+# por branch quando necessário:
+#   NEXT_PUBLIC_API_URL  URL HTTPS da API, sem barra final (obrigatória)
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Next.js 16 exige Node >= 20.9; fixa a mesma major do Dockerfile.
+        - nvm install 22 && nvm use 22
+        - node --version
+        - npm ci --cache .npm --prefer-offline --no-audit --no-fund
+    build:
+      commands:
+        - |
+          if [ -z "$NEXT_PUBLIC_API_URL" ]; then
+            echo "ERRO: defina NEXT_PUBLIC_API_URL nas variáveis de ambiente do Amplify (branch $AWS_BRANCH)."
+            exit 1
+          fi
+        - |
+          case "$NEXT_PUBLIC_API_URL" in
+            https://*) ;;
+            *) echo "AVISO: NEXT_PUBLIC_API_URL não é HTTPS; o navegador bloqueia chamadas HTTP a partir do site HTTPS (mixed content)." ;;
+          esac
+        # NEXT_PUBLIC_* é embutida no bundle no build; o .env.production deixa
+        # o mesmo valor disponível também para o código de servidor (SSR).
+        - echo "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" >> .env.production
+        - export NEXT_TELEMETRY_DISABLED=1
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - .next/cache/**/*
+      - .npm/**/*

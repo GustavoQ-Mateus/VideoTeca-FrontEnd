@@ -1,42 +1,75 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { ButtonHTMLAttributes, forwardRef } from "react";
+import { ButtonHTMLAttributes, ReactNode, forwardRef } from "react";
+import { Spinner } from "./Spinner";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "ghost" | "danger" | "outline";
-  size?: "sm" | "md" | "lg";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "outline";
+export type ButtonSize = "sm" | "md" | "lg" | "icon";
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  /** Mostra spinner, define aria-busy e bloqueia cliques. */
   loading?: boolean;
+  /** Texto exibido enquanto `loading` (padrão: mantém o rótulo). */
+  loadingText?: string;
+  /** Ícone antes do rótulo (oculto quando `loading`). */
+  leftIcon?: ReactNode;
+  /** Ícone depois do rótulo. */
+  rightIcon?: ReactNode;
+  /** Ocupa toda a largura do contêiner. */
+  fullWidth?: boolean;
 }
 
+const BASE =
+  "inline-flex items-center justify-center gap-2 font-medium select-none whitespace-nowrap " +
+  "transition-[background-color,border-color,color,box-shadow,transform] duration-200 motion-reduce:transition-none " +
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " +
+  "disabled:opacity-50 disabled:cursor-not-allowed aria-busy:cursor-progress";
+
+const VARIANTS: Record<ButtonVariant, string> = {
+  primary:   "bg-brand text-fg-inverse hover:bg-brand-hover focus-visible:ring-brand enabled:active:scale-[0.98]",
+  secondary: "bg-brand-subtle text-brand hover:bg-[#D0E6F8] focus-visible:ring-brand",
+  ghost:     "bg-transparent text-fg-muted hover:bg-canvas hover:text-fg focus-visible:ring-brand",
+  danger:    "bg-danger-strong text-fg-inverse hover:bg-danger-hover focus-visible:ring-danger enabled:active:scale-[0.98]",
+  outline:   "border border-line-strong bg-surface text-fg hover:border-brand hover:text-brand focus-visible:ring-brand",
+};
+
+const SIZES: Record<ButtonSize, string> = {
+  sm:   "text-sm min-h-9 px-3 py-1.5 rounded-control",
+  md:   "text-sm min-h-11 px-4 py-2.5 rounded-control",
+  lg:   "text-base min-h-12 px-6 py-3 rounded-panel",
+  icon: "min-h-11 min-w-11 p-2.5 rounded-control",
+};
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", loading, disabled, children, ...props }, ref) => {
-    const base = "inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
-    const variants = {
-      primary:   "bg-[#0066B3] text-white hover:bg-[#005599] focus-visible:ring-[#0066B3] active:scale-[0.98]",
-      secondary: "bg-[#E8F2FC] text-[#0066B3] hover:bg-[#D0E6F8] focus-visible:ring-[#0066B3]",
-      ghost:     "bg-transparent text-[#667085] hover:bg-[#F5F7FA] focus-visible:ring-[#0066B3]",
-      danger:    "bg-[#E7472E] text-white hover:bg-[#CC3D26] focus-visible:ring-[#E7472E] active:scale-[0.98]",
-      outline:   "border border-[#E2E8F0] bg-white text-[#172033] hover:border-[#0066B3] hover:text-[#0066B3] focus-visible:ring-[#0066B3]",
-    };
-    const sizes = {
-      sm: "text-sm px-3 py-1.5 rounded-[10px]",
-      md: "text-sm px-4 py-2.5 rounded-[10px]",
-      lg: "text-base px-6 py-3 rounded-[14px]",
-    };
+  (
+    {
+      className,
+      variant = "primary",
+      size = "md",
+      loading,
+      loadingText,
+      leftIcon,
+      rightIcon,
+      fullWidth,
+      disabled,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <button
         ref={ref}
-        className={cn(base, variants[variant], sizes[size], className)}
+        className={cn(BASE, VARIANTS[variant], SIZES[size], fullWidth && "w-full", className)}
         disabled={disabled || loading}
+        aria-busy={loading || undefined}
         {...props}
       >
-        {loading && (
-          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-        )}
-        {children}
+        {loading ? <Spinner size="sm" decorative /> : leftIcon}
+        {loading && loadingText ? loadingText : children}
+        {!loading && rightIcon}
       </button>
     );
   }

@@ -20,6 +20,13 @@ const STATS = [
   { icon: BookOpen, value: "5",     label: "salas de exibição" },
 ];
 
+// Volta para a página pedida (?next=) só se for caminho interno da área do próprio perfil.
+function safeNext(home: string): string {
+  const next = new URLSearchParams(window.location.search).get("next") ?? "";
+  const internal = next.startsWith("/") && !next.startsWith("//") && !next.includes("\\");
+  return internal && (next === home || next.startsWith(home + "/")) ? next : home;
+}
+
 export default function LoginPage() {
   const [role,         setRole]         = useState<RoleId>("aluno");
   const [showPassword, setShowPassword] = useState(false);
@@ -41,9 +48,9 @@ export default function LoginPage() {
       const data = await apiLogin(login, password, role);
       if (!data) throw new Error("Credenciais inválidas");
       setSession(data.token, data.user);
-      window.location.href = roleHome(data.user.role);
-    } catch (err: any) {
-      setError(err.message ?? "Credenciais inválidas");
+      window.location.href = safeNext(roleHome(data.user.role));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Credenciais inválidas");
     } finally {
       setLoading(false);
     }

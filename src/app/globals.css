@@ -1,26 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
-/* ── Design Tokens ─────────────────────────────────────── */
+/*
+ * Design system Videoteca UNIFOR — ver docs/design-system.md.
+ * Fontes: carregadas via next/font em src/app/layout.tsx (--font-inter, --font-poppins).
+ * Não importar Google Fonts aqui (requisição duplicada e bloqueante).
+ */
+
+/* ── Design Tokens (fonte da verdade) ──────────────────── */
 :root {
   /* Brand */
-  --unifor-navy:       #003A70;
-  --unifor-blue:       #0066B3;
-  --unifor-blue-light: #E8F2FC;
-  --unifor-red:        #E7472E;
-  --unifor-yellow:     #F6C343;
-  --unifor-green:      #2EAD68;
+  --unifor-navy:        #003A70;
+  --unifor-blue:        #0066B3; /* 5.9:1 sobre branco */
+  --unifor-blue-hover:  #005599;
+  --unifor-blue-light:  #E8F2FC;
+  --unifor-red:         #E7472E; /* decorativo/ícones; para texto use --danger */
+  --unifor-yellow:      #F6C343; /* nunca como cor de texto sobre fundo claro */
+  --unifor-green:       #2EAD68; /* decorativo; para texto use --success */
+
+  /* Feedback (texto com contraste AA sobre branco) */
+  --danger:         #B42318; /* 6.6:1 */
+  --danger-strong:  #C4321C; /* fundo de botão com texto branco, 5.5:1 */
+  --danger-hover:   #A42A17;
+  --danger-subtle:  #FEF3F2;
+  --success:        #067647; /* 5.7:1 */
+  --success-subtle: #ECFDF3;
+  --warning:        #93370D; /* 7.5:1 */
+  --warning-subtle: #FFFAEB;
+  --info:           #0066B3;
+  --info-subtle:    #E8F2FC;
 
   /* Surface */
-  --bg:           #F5F7FA;
-  --bg-card:      #FFFFFF;
-  --border:       #E2E8F0;
-  --border-strong:#C4CDD8;
+  --bg:            #F5F7FA;
+  --bg-card:       #FFFFFF;
+  --bg-subtle:     #FAFBFC;
+  --border:        #E2E8F0; /* divisores (decorativo) */
+  --border-strong: #C4CDD8;
+  --border-input:  #8A94A6; /* borda de controle de formulário, ≥3:1 (WCAG 1.4.11) */
 
-  /* Text */
-  --text-primary:   #172033;
-  --text-secondary: #667085;
-  --text-tertiary:  #98A2B3;
+  /* Text — todos ≥ 4.5:1 sobre --bg-card e --bg */
+  --text-primary:   #172033; /* 16.4:1 */
+  --text-secondary: #475467; /* 7.7:1 */
+  --text-tertiary:  #667085; /* 4.97:1 (antes #98A2B3 = 2.6:1, reprovado em AA) */
+  --text-disabled:  #98A2B3; /* apenas estados desabilitados/decorativos */
   --text-on-dark:   #FFFFFF;
 
   /* Audiovisual dark */
@@ -28,7 +49,7 @@
   --av-card:  #1D2939;
   --av-muted: #344054;
 
-  /* Status */
+  /* Status (pontos/fundos; o Badge usa pares texto/fundo AA) */
   --status-available:   #2EAD68;
   --status-reserved:    #0066B3;
   --status-borrowed:    #F6C343;
@@ -65,10 +86,118 @@
   --dur-base:  220ms;
   --dur-slow:  320ms;
   --dur-panel: 280ms;
+
+  /* Layout */
+  --topbar-h:            56px;
+  --sidebar-w:           256px;
+  --sidebar-w-collapsed: 72px;
+  --bottom-nav-h:        64px;
+  --touch-target:        44px;
+}
+
+/*
+ * Tokens expostos ao Tailwind v4 (classes utilitárias da marca):
+ *   bg-brand, text-brand, bg-brand-subtle, bg-brand-navy, text-fg, text-fg-muted,
+ *   text-fg-subtle, bg-surface, bg-canvas, border-line, border-input, text-danger,
+ *   bg-danger-strong, rounded-control, rounded-card, shadow-card, font-display,
+ *   text-title-lg ...
+ * "inline" faz as utilidades referenciarem as variáveis de :root acima,
+ * então mudar um token em :root muda todas as classes.
+ * Nomes semânticos (não sobrescrevem rounded-lg, shadow-md etc. do Tailwind).
+ */
+@theme inline {
+  /* Cores — marca */
+  --color-brand:          var(--unifor-blue);
+  --color-brand-hover:    var(--unifor-blue-hover);
+  --color-brand-subtle:   var(--unifor-blue-light);
+  --color-brand-navy:     var(--unifor-navy);
+  --color-brand-red:      var(--unifor-red);
+  --color-brand-yellow:   var(--unifor-yellow);
+  --color-brand-green:    var(--unifor-green);
+
+  /* Cores — superfícies e bordas */
+  --color-canvas:         var(--bg);
+  --color-surface:        var(--bg-card);
+  --color-surface-subtle: var(--bg-subtle);
+  --color-line:           var(--border);
+  --color-line-strong:    var(--border-strong);
+  --color-input:          var(--border-input);
+
+  /* Cores — texto */
+  --color-fg:             var(--text-primary);
+  --color-fg-muted:       var(--text-secondary);
+  --color-fg-subtle:      var(--text-tertiary);
+  --color-fg-disabled:    var(--text-disabled);
+  --color-fg-inverse:     var(--text-on-dark);
+
+  /* Cores — feedback */
+  --color-danger:         var(--danger);
+  --color-danger-strong:  var(--danger-strong);
+  --color-danger-hover:   var(--danger-hover);
+  --color-danger-subtle:  var(--danger-subtle);
+  --color-success:        var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-warning:        var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-info:           var(--info);
+  --color-info-subtle:    var(--info-subtle);
+
+  /* Cores — audiovisual (áreas escuras) */
+  --color-av:             var(--av-bg);
+  --color-av-card:        var(--av-card);
+  --color-av-muted:       var(--av-muted);
+
+  /* Tipografia */
+  --font-sans:    var(--font-inter), "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-poppins), "Poppins", system-ui, sans-serif;
+
+  /* Escala tipográfica (ver docs/design-system.md) */
+  --text-caption:   0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-body-sm:   0.875rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-body:      1rem;
+  --text-body--line-height: 1.5rem;
+  --text-title-sm:  1.125rem;
+  --text-title-sm--line-height: 1.5rem;
+  --text-title:     1.25rem;
+  --text-title--line-height: 1.75rem;
+  --text-title-lg:  1.5rem;
+  --text-title-lg--line-height: 2rem;
+  --text-display:   2rem;
+  --text-display--line-height: 2.5rem;
+
+  /* Raios */
+  --radius-chip:    var(--r-xs);
+  --radius-control: var(--r-sm);
+  --radius-panel:   var(--r-md);
+  --radius-card:    var(--r-lg);
+  --radius-sheet:   var(--r-xl);
+  --radius-pill:    var(--r-full);
+
+  /* Sombras */
+  --shadow-card:    var(--shadow-sm);
+  --shadow-raised:  var(--shadow-md);
+  --shadow-overlay: var(--shadow-lg);
+  --shadow-brand:   var(--shadow-blue);
+
+  /* Movimento */
+  --ease-brand: var(--ease-out);
+}
+
+/* Compatibilidade de contraste: páginas legadas usam o hex antigo do texto terciário
+   (#98A2B3, 2.6:1). Remapeado para o token AA; variantes (hover:) continuam vencendo
+   por especificidade. */
+@layer utilities {
+  .text-\[\#98A2B3\] { color: var(--text-tertiary); }
+  .placeholder\:text-\[\#98A2B3\]::placeholder { color: var(--text-tertiary); }
 }
 
 /* ── Base ──────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Evita rolagem horizontal acidental em 360–390px */
+html, body { max-width: 100%; overflow-x: clip; }
 
 body {
   background: var(--bg);
@@ -137,6 +266,7 @@ h1, h2, h3, h4, h5, h6 {
 @media (prefers-reduced-motion: no-preference) {
   .motion-fade     { animation: fadeIn     var(--dur-base) var(--ease-out) both; }
   .motion-up       { animation: slideUp    var(--dur-base) var(--ease-out) both; }
+  .motion-slide-up { animation: slideUp    var(--dur-base) var(--ease-out) both; }
   .motion-down     { animation: slideDown  var(--dur-base) var(--ease-out) both; }
   .motion-right    { animation: slideInRight var(--dur-panel) var(--ease-out) both; }
   .motion-left     { animation: slideInLeft  var(--dur-panel) var(--ease-out) both; }
@@ -149,6 +279,8 @@ h1, h2, h3, h4, h5, h6 {
   .stagger-4 { animation-delay: 160ms; }
   .stagger-5 { animation-delay: 200ms; }
   .stagger-6 { animation-delay: 240ms; }
+
+  .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
 }
 
 /* ── Skeleton ──────────────────────────────────────────── */
@@ -215,9 +347,14 @@ h1, h2, h3, h4, h5, h6 {
     opacity var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-out);
 }
-.film-card:hover .film-actions {
+.film-card:hover .film-actions,
+.film-card:focus-within .film-actions {
   opacity: 1;
   transform: translateY(0);
+}
+/* Dispositivos sem hover (toque): ações sempre visíveis */
+@media (hover: none) {
+  .film-card .film-actions { opacity: 1; transform: none; }
 }
 
 /* ── Row items ─────────────────────────────────────────── */
@@ -277,8 +414,31 @@ h1, h2, h3, h4, h5, h6 {
   outline-offset: 2px;
 }
 
-/* ── Pulse dot ─────────────────────────────────────────── */
-.pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+/* Alvos de foco programático (skip link, diálogos) sem anel permanente */
+[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
+
+/* ── Skip link ─────────────────────────────────────────── */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 200;
+  padding: 0.75rem 1rem;
+  min-height: var(--touch-target);
+  border-radius: var(--r-sm);
+  background: var(--unifor-navy);
+  color: var(--text-on-dark);
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-200%);
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--unifor-yellow);
+  outline-offset: 2px;
+}
 
 /* ── Section divider ───────────────────────────────────── */
 .section-label {
@@ -288,4 +448,17 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-tertiary);
+}
+
+/* ── Movimento reduzido ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .film-card:hover,
+  .film-card:hover .film-cover { transform: none; }
 }

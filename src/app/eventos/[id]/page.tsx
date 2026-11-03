@@ -2,9 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Film, MapPin, Users, Calendar, Award } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import type { EventRecord } from "@/lib/types";
-
-function getEventById(_id: number): EventRecord | undefined { return undefined; }
+import { publishedEvent } from "@/lib/public-events";
 
 const NAV_LINKS = [
   { label: "Catálogo", href: "/catalogo" },
@@ -12,11 +10,15 @@ const NAV_LINKS = [
   { label: "Sobre", href: "/sobre" },
 ] as const;
 
-export default async function PublicEventDetail({ params }: { params: Promise<{ id: string }> }) {
+export default async function PublicEventDetail({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const num = Number(id);
   if (Number.isNaN(num)) notFound();
-  const event = getEventById(num);
+  const event = await publishedEvent(num);
   if (!event) notFound();
 
   const spots = event.slots - event.enrolled;
@@ -29,11 +31,17 @@ export default async function PublicEventDetail({ params }: { params: Promise<{ 
             <div className="w-7 h-7 bg-[#0066B3] rounded-[8px] flex items-center justify-center">
               <Film className="w-3.5 h-3.5 text-white" aria-hidden />
             </div>
-            <span className="text-sm font-bold text-[#003A70]">Videoteca Unifor</span>
+            <span className="text-sm font-bold text-[#003A70]">
+              Videoteca Unifor
+            </span>
           </Link>
           <nav className="hidden md:flex gap-1 ml-6" aria-label="Navegação">
             {NAV_LINKS.map((l) => (
-              <Link key={l.href} href={l.href} className="px-3 py-2 text-sm text-[#667085] hover:text-[#172033] rounded-[8px] font-medium">
+              <Link
+                key={l.href}
+                href={l.href}
+                className="px-3 py-2 text-sm text-[#667085] hover:text-[#172033] rounded-[8px] font-medium"
+              >
                 {l.label}
               </Link>
             ))}
@@ -52,7 +60,9 @@ export default async function PublicEventDetail({ params }: { params: Promise<{ 
             <span className="mb-3 inline-block text-xs font-bold uppercase tracking-wider bg-white/20 text-white px-3 py-1 rounded-full">
               {event.type}
             </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white max-w-3xl leading-tight">{event.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white max-w-3xl leading-tight">
+              {event.title}
+            </h1>
           </div>
         </div>
       </div>
@@ -70,9 +80,17 @@ export default async function PublicEventDetail({ params }: { params: Promise<{ 
             <div className="flex gap-2 text-[#667085]">
               <Calendar className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
               <div>
-                <p className="text-xs font-semibold uppercase">Data e horário</p>
+                <p className="text-xs font-semibold uppercase">
+                  Data e horário
+                </p>
                 <p className="text-[#172033] font-medium">
-                  {new Date(event.date).toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })} · {event.time}
+                  {new Date(event.date).toLocaleDateString("pt-BR", {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}{" "}
+                  · {event.time}
                 </p>
               </div>
             </div>
@@ -87,18 +105,27 @@ export default async function PublicEventDetail({ params }: { params: Promise<{ 
               <Users className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
               <div>
                 <p className="text-xs font-semibold uppercase">Vagas</p>
-                <p className="text-[#172033] font-medium">{spots > 0 ? `${spots} disponíveis` : "Lotado"}</p>
+                <p className="text-[#172033] font-medium">
+                  {spots > 0 ? `${spots} disponíveis` : "Lotado"}
+                </p>
               </div>
             </div>
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-[#172033] mb-2">Sobre o evento</h2>
-            <p className="text-[#667085] leading-relaxed">{event.description}</p>
+            <h2 className="text-sm font-semibold text-[#172033] mb-2">
+              Sobre o evento
+            </h2>
+            <p className="text-[#667085] leading-relaxed">
+              {event.description}
+            </p>
           </div>
           {event.certificate && (
             <div className="flex gap-2 rounded-[12px] bg-[#E8F2FC] border border-[#0066B3]/20 px-4 py-3 text-sm text-[#0066B3]">
               <Award className="w-5 h-5 flex-shrink-0" aria-hidden />
-              <span>Certificado de participação disponível mediante presença e check-in.</span>
+              <span>
+                Certificado de participação disponível mediante presença e
+                check-in.
+              </span>
             </div>
           )}
           <div className="flex flex-wrap gap-3 pt-2">

@@ -73,6 +73,7 @@ const NAV: Record<string, { section?: string; items: NavItem[] }[]> = {
     {
       section: "Acervo & Circulação",
       items: [
+        { label: "Equipamentos", href: "/funcionario/equipamentos", icon: Package },
         { label: "Acervo",       href: "/funcionario/acervo",            icon: Package },
         { label: "Empréstimos",  href: "/funcionario/emprestimos",       icon: BookOpen },
         { label: "Devoluções",   href: "/funcionario/devolucoes",        icon: BookMarked },
